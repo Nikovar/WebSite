@@ -1,8 +1,7 @@
-import uuid  # Required for unique book instances
-from datetime import date
-
-from django.contrib.auth.models import User  # Required to assign User as a borrower
 from django.db import models
+
+# Create your models here.
+
 from django.urls import reverse  # To generate URLS by reversing URL patterns
 
 
@@ -11,7 +10,7 @@ class Genre(models.Model):
     name = models.CharField(
         max_length=200,
         help_text="Enter a book genre (e.g. Science Fiction, French Poetry etc.)"
-    )
+        )
 
     def __str__(self):
         """String for representing the Model object (in Admin site etc.)"""
@@ -53,6 +52,12 @@ class Book(models.Model):
     def __str__(self):
         """String for representing the Model object."""
         return self.title
+
+
+import uuid  # Required for unique book instances
+from datetime import date
+
+from django.contrib.auth.models import User  # Required to assign User as a borrower
 
 
 class BookInstance(models.Model):

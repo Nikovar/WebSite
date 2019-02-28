@@ -1,6 +1,8 @@
 from django.contrib import admin
 
-from .models import Author, Genre, Book, BookInstance, Language
+# Register your models here.
+
+from .models import Author, Genre, Book, BookInstance, Language, Symbols
 
 """Minimal registration of Models.
 admin.site.register(Book)
@@ -12,7 +14,6 @@ admin.site.register(Language)
 
 admin.site.register(Genre)
 admin.site.register(Language)
-
 
 class BooksInline(admin.TabularInline):
     """Defines format of inline book insertion (used in AuthorAdmin)"""
@@ -36,7 +37,6 @@ class BooksInstanceInline(admin.TabularInline):
     """Defines format of inline book instance insertion (used in BookAdmin)"""
     model = BookInstance
 
-
 class BookAdmin(admin.ModelAdmin):
     """Administration object for Book models. 
     Defines:
@@ -45,7 +45,6 @@ class BookAdmin(admin.ModelAdmin):
     """
     list_display = ('title', 'author', 'display_genre')
     inlines = [BooksInstanceInline]
-
 
 admin.site.register(Book, BookAdmin)
 
