@@ -4,7 +4,6 @@ import datetime  # for checking renewal date range.
     
 from django import forms
 
-
 class RenewBookForm(forms.Form):
     """Form for a librarian to renew books."""
     renewal_date = forms.DateField(help_text="Enter a date between now and 4 weeks (default 3).")
