@@ -1,8 +1,17 @@
-from django.shortcuts import render
+import datetime
 
-# Create your views here.
+from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin  # Added as part of challenge!
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render
+from django.urls import reverse, reverse_lazy
+from django.views import generic
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
-from .models import Book, Author, BookInstance, Genre
+from catalog.forms import RenewBookForm
+from .models import Book, Author, BookInstance
+
 
 def index(request):
     """View function for home page of site."""
@@ -22,21 +31,26 @@ def index(request):
     return render(
         request,
         'index.html',
-        context={'num_books':num_books,'num_instances':num_instances,'num_instances_available':num_instances_available,'num_authors':num_authors,
-            'num_visits':num_visits},
+        context={
+            'num_books': num_books,
+            'num_instances': num_instances,
+            'num_instances_available': num_instances_available,
+            'num_authors': num_authors,
+            'num_visits': num_visits
+        },
     )
-
-from django.views import generic
 
 
 class BookListView(generic.ListView):
     """Generic class-based view for a list of books."""
     model = Book
     paginate_by = 10
-    
+
+
 class BookDetailView(generic.DetailView):
     """Generic class-based detail view for a book."""
     model = Book
+
 
 class AuthorListView(generic.ListView):
     """Generic class-based list view for a list of authors."""
@@ -49,40 +63,26 @@ class AuthorDetailView(generic.DetailView):
     model = Author
 
 
-from django.contrib.auth.mixins import LoginRequiredMixin
-
 class LoanedBooksByUserListView(LoginRequiredMixin,generic.ListView):
     """Generic class-based view listing books on loan to current user."""
     model = BookInstance
-    template_name ='catalog/bookinstance_list_borrowed_user.html'
+    template_name = 'catalog/bookinstance_list_borrowed_user.html'
     paginate_by = 10
     
     def get_queryset(self):
         return BookInstance.objects.filter(borrower=self.request.user).filter(status__exact='o').order_by('due_back')
-        
 
-# Added as part of challenge!
-from django.contrib.auth.mixins import PermissionRequiredMixin
 
 class LoanedBooksAllListView(PermissionRequiredMixin,generic.ListView):
     """Generic class-based view listing all books on loan. Only visible to users with can_mark_returned permission."""
     model = BookInstance
     permission_required = 'catalog.can_mark_returned'
-    template_name ='catalog/bookinstance_list_borrowed_all.html'
+    template_name = 'catalog/bookinstance_list_borrowed_all.html'
     paginate_by = 10
     
     def get_queryset(self):
-        return BookInstance.objects.filter(status__exact='o').order_by('due_back')  
+        return BookInstance.objects.filter(status__exact='o').order_by('due_back')
 
-
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponseRedirect
-from django.urls import reverse
-import datetime
-from django.contrib.auth.decorators import permission_required
-
-#from .forms import RenewBookForm
-from catalog.forms import RenewBookForm
 
 @permission_required('catalog.can_mark_returned')
 def renew_book_librarian(request, pk):
@@ -107,7 +107,7 @@ def renew_book_librarian(request, pk):
     # If this is a GET (or any other method) create the default form
     else:
         proposed_renewal_date = datetime.date.today() + datetime.timedelta(weeks=3)
-        form = RenewBookForm(initial={'renewal_date': proposed_renewal_date,})
+        form = RenewBookForm(initial={'renewal_date': proposed_renewal_date})
 
     context = {
         'form': form,
@@ -115,12 +115,6 @@ def renew_book_librarian(request, pk):
     }
 
     return render(request, 'catalog/book_renew_librarian.html', context)
-    
-    
-    
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.urls import reverse_lazy
-from .models import Author
 
 
 class AuthorCreate(PermissionRequiredMixin, CreateView):
@@ -129,10 +123,12 @@ class AuthorCreate(PermissionRequiredMixin, CreateView):
     initial = {'date_of_death':'05/01/2018',}
     permission_required = 'catalog.can_mark_returned'
 
+
 class AuthorUpdate(PermissionRequiredMixin, UpdateView):
     model = Author
     fields = ['first_name','last_name','date_of_birth','date_of_death']
     permission_required = 'catalog.can_mark_returned'
+
 
 class AuthorDelete(PermissionRequiredMixin, DeleteView):
     model = Author
@@ -146,10 +142,12 @@ class BookCreate(PermissionRequiredMixin, CreateView):
     fields = '__all__'
     permission_required = 'catalog.can_mark_returned'
 
+
 class BookUpdate(PermissionRequiredMixin, UpdateView):
     model = Book
     fields = '__all__'
     permission_required = 'catalog.can_mark_returned'
+
 
 class BookDelete(PermissionRequiredMixin, DeleteView):
     model = Book
