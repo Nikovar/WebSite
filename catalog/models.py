@@ -82,9 +82,6 @@ class Symbol(models.Model):
                                        through_fields=('symbol', 'book'))
     name = models.CharField(max_length=100)
 
-    def descriptions(self):
-        return
-
     def __str__(self):
         return self.name
 
