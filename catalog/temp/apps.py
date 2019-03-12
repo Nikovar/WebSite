@@ -1,9 +1,9 @@
 from django.apps import AppConfig
-import catalog.settings as local_settings
+import catalog.temp.settings as local_settings
 
 
-class CatalogConfig(AppConfig):
-    name = 'catalog'
+class TempConfig(AppConfig):
+    name = 'catalog.temp'
 
     def __init__(self, app_name, app_module):
         AppConfig.__init__(self, app_name, app_module)

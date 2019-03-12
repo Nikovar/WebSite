@@ -1,78 +1,79 @@
 from django.utils.timezone import now as current_time
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import User  # Required to assign User as a borrower
+from django.contrib.auth.models import User
 from django.db import models
-from django.urls import reverse  # To generate URLS by reversing URL patterns
+from django.urls import reverse  # To generate URLS by reversing URL patterns... @gronix: let this existing for now
+from django.core.files.storage import FileSystemStorage
+from django.core.validators import FileExtensionValidator
+from django.core.exceptions import ValidationError
+
+from .settings import *
+
+book_fs = FileSystemStorage(location=APP_PATH + '/books/')
 
 
 class Genre(models.Model):
-    """Model representing a book genre (e.g. Science Fiction, Non Fiction)."""
     name = models.CharField(
-        max_length=200,
+        max_length=GENRE_NAME_LEN,
         help_text="Enter a book genre (e.g. Science Fiction, French Poetry etc.)"
     )
 
     def __str__(self):
-        """String for representing the Model object (in Admin site etc.)"""
         return self.name
 
 
 class Language(models.Model):
-    """Model representing a Language (e.g. English, French, Japanese, etc.)"""
     name = models.CharField(
-        max_length=200,
-        help_text="Enter the book's natural language (e.g. English, French, Japanese etc.)"
+        max_length=LANG_NAME_LEN,  # @gronix: i tried to find more longer name of language then this limit aaaand... i couldn't :D
+        help_text="Enter the book's natural language (e.g. Russian, English, French etc.)"
     )
 
     def __str__(self):
-        """String for representing the Model object (in Admin site etc.)"""
         return self.name
 
 
 class Author(models.Model):
-    """Model representing an author."""
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=100)
+    first_name = models.CharField(max_length=AUTHOR_FST_NAME_LEN)
+    last_name = models.CharField(max_length=AUTHOR_LST_NAME_LEN)
     date_of_birth = models.DateField(null=True, blank=True)
     date_of_death = models.DateField(null=True, blank=True)
-
-    class Meta:
-        ordering = ['last_name', 'first_name']
 
     def get_absolute_url(self):
         """Returns the url to access a particular author instance."""
         return reverse('author-detail', args=[str(self.id)])
 
     def __str__(self):
-        """String for representing the Model object."""
         return '{}, {}'.format(self.last_name, self.first_name)
+
+    class Meta:
+        ordering = ['last_name', 'first_name']
 
 
 class Book(models.Model):
-    """Model representing a book."""
-    title = models.CharField(max_length=200)
-    author = models.ForeignKey(Author, on_delete=models.SET_NULL, null=True)
+    title = models.CharField(max_length=BOOK_TITLE_LEN)
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)
     genre = models.ManyToManyField(Genre, help_text="Select a genre for this book")
     language = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True)
-    summary = models.TextField(max_length=1000, help_text="Enter a brief description of the book")
+    summary = models.TextField(max_length=SUMMARY_LEN, help_text="Enter a brief description of the book")
+    file = models.FileField(storage=book_fs,
+                            validators=[FileExtensionValidator(BOOK_EXTENSIONS)],
+                            help_text="Upload your text of book in one single file here")
     isbn = models.CharField(
         'ISBN',
-        max_length=13,
-        help_text='13 Character <a href="https://www.isbn-international.org/content/what-isbn">ISBN number</a>'
+        max_length=ISBN_LEN,
+        null=True,
+        help_text='{} Character <a href="https://www.isbn-international.org/content/what-isbn">ISBN number</a>'.format(ISBN_LEN)
     )
 
     def display_genre(self):
         """Creates a string for the Genre. This is required to display genre in Admin."""
         return ', '.join([genre.name for genre in self.genre.all()[:3]])
 
-    # display_genre.short_description = 'Genre'  # нужно ли это? пока выпилил
-
     def get_absolute_url(self):
         """Returns the url to access a particular book instance."""
         return reverse('book-detail', args=[str(self.id)])
 
     def __str__(self):
-        """String for representing the Model object."""
         return self.title
 
 
@@ -80,34 +81,76 @@ class Symbol(models.Model):
     occurs_in = models.ManyToManyField(Book,
                                        through='Existences',
                                        through_fields=('symbol', 'book'))
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=SYMBOL_NAME_LEN)
 
     def __str__(self):
         return self.name
 
 
 class SymbolDescription(models.Model):
-    symbol = models.ForeignKey(Symbol, on_delete=models.CASCADE, related_name='descr')
-    text = models.CharField(max_length=500)
+    symbol = models.ForeignKey(Symbol, on_delete=models.CASCADE, related_name='descriptions')
+    text = models.TextField(max_length=SYMBOL_DESCRIPTION_LEN)
 
     def __str__(self):
         return self.text
 
 
-# this one only for the correct listing of symbol occurrences, which owner has left
+# this one only for the correct listing of symbol occurrences, which owner has left @gronix
 def get_sentinel_user():
     return get_user_model().objects.get_or_create(username='deleted')[0]
 
 
-# Standard Django's implementation for many-to-many relation with extra fields:
+# Standard Django's implementation for many-to-many relation with extra fields @gronix
 class Existences(models.Model):
-    symbol = models.ForeignKey(Symbol, on_delete=models.CASCADE)
-    book = models.ForeignKey(Book, on_delete=models.CASCADE)
-    inserter = models.ForeignKey(User, on_delete=models.SET(get_sentinel_user), related_name='user_added')
+    symbol = models.ForeignKey(Symbol, on_delete=models.CASCADE,
+                               related_name='occurs',
+                               related_query_name='occ')
+    book = models.ForeignKey(Book, on_delete=models.CASCADE,
+                             related_name='symbols',
+                             related_query_name='symb')
+    inserter = models.ForeignKey(User, on_delete=models.SET(get_sentinel_user),
+                                 related_name='inserted',
+                                 related_query_name='ins')
     date_joined = models.DateTimeField(default=current_time)
 
     def __str__(self):
         time = self.date_joined.isoformat(sep='/', timespec='seconds')
-        return '{} -> {} (by {} at {})'.format(self.symbol, self.book, self.inserter, time)
+        return '"{}" -> "{}" (by {} at {})'.format(self.symbol, self.book, self.inserter, time)
 
-# TODO: add <TEMPORARY> model for not yet approved symbols and existences. @gronix
+
+# DISCLAIMER: All that is written below is subject to discussion. ;). @gronix
+class Addresses(models.Model):
+    existence = models.ForeignKey(Existences, on_delete=models.CASCADE,
+                                  related_name='addressees',
+                                  related_query_name='adr')
+    start = models.PositiveIntegerField(help_text="Start of entry from file beginnings")
+    word_shift = models.PositiveSmallIntegerField(help_text="Shift to Symbol existence from entry start address")
+    word_len = models.PositiveSmallIntegerField(help_text="Length of Symbol (or his synonym) inside context")
+    end_shift = models.PositiveSmallIntegerField(help_text="Shift to end of entry from start address")
+
+    # @gronix:
+    #   Django has stupid logics for model validation - framework docs suggests using
+    #   forms based on models for validate model data (i.e. fields validations to
+    #   compatibility with each other), aaand no another! (clear()/full_clear()/validate_unique()
+    #   are not suitable for this - see docs)
+    #   I think this kind of shi... They declared support for something more suitable only in version 2.2...
+
+    #   So, I insist to use following approach for handling logically corrupt data.
+    #   Because this is more general and will check data before storing in db for all cases
+    #   (whether saving via views, django shell etc.)
+    def save(self, *args, **kwargs):
+        # @gronix: "try..except" may seem excessive, but i prefer to keep this code due to future structure
+        #   corrections and for more general approach at the very beginnings of project.
+        try:
+            if self.word_shift + self.word_len > self.end_shift:
+                raise ValidationError("Symbol goes outside the existence boards!")
+        except ValidationError as e:
+            print("ERROR! While saving was detected following:\n{}\nSaving aborted.\n".format(e.message))
+        else:
+            super().save(*args, **kwargs)
+
+    def __str__(self):
+        sword_pos = self.start + self.word_shift
+        eword_pos = sword_pos + self.word_len
+        end = self.start + self.end_shift
+        return '({} - [{}..{}] - {})'.format(self.start, sword_pos, eword_pos, end)
