@@ -1,0 +1,147 @@
+{% load static %}
+
+<!DOCTYPE html>
+<!--[if lt IE 8 ]><html class="no-js ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="no-js ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 8)|!(IE)]><!-->
+<html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+    <!--- Basic Page Needs
+    ================================================== -->
+    <title>{% block title %}<p style="color:red">!!TEMPLATE BASE MAFACKA!!</p>{% endblock %}</title>
+
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Mobile Specific Metas
+    ================================================== -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!-- CSS
+    ================================================== -->
+
+    {% block css %}
+
+    <link rel="stylesheet" href="{% static 'catalog/css/default.css' %}">
+    <link rel="stylesheet" href="{% static 'catalog/css/layout.css' %}">
+    <link rel="stylesheet" href="{% static 'catalog/css/media-queries.css' %}">
+
+    {% endblock %}
+
+    <!-- Script
+    ================================================== -->
+
+    {% block js %}
+
+    <script src="{% static 'catalog/js/modernizr.js' %}"></script>
+
+    {% endblock %}
+
+    <!-- Favicons
+    ================================================== -->
+    <link rel="shortcut icon" href="{% static 'catalog/images/favicon.ico' %}">
+
+</head>
+
+<body>
+    <header>
+        <div class="row">
+            <div class="twelve columns">
+
+                {% block logo %}
+                <div class="logo">
+                    <a href="#"><img alt="" src="{% static 'catalog/images/logo.png' %}"></a>
+                </div>
+                {% endblock %}
+
+                {% block menu %}
+                <nav id="nav-wrap">
+                    <a class="mobile-btn" href="#nav-wrap" title="Show navigation">Show navigation</a>
+                    <a class="mobile-btn" href="#" title="Hide navigation">Hide navigation</a>
+                    <ul id="nav" class="nav">
+                        <li class="current"><a href="#">Home</a></li>
+                        <li>
+                            <span>
+                                <a href="#">News</a>
+                            </span>
+                            <ul>
+                                <li><a href="#">News List</a></li>
+                                <li><a href="#">News Article</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <span>
+                                <a href="#">Authors</a>
+                            </span>
+                            <ul>
+                                <li><a href="#">Authors List</a></li>
+                                <li><a href="#">Author</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Registration</a></li>
+                    </ul> <!-- end #nav -->
+                </nav> <!-- end #nav-wrap -->
+                {% endblock %}
+            </div>
+        </div>
+    </header> <!-- Header End -->
+
+        <!-- Intro Section
+    ================================================== -->
+    <section id="intro">
+        {% block intro %}{% endblock %}
+    </section> <!-- Intro Section End-->
+
+    {% block main %}{% endblock %}
+
+    <footer>
+
+        {% block footer %}
+        <div class="row">
+            <div class="twelve columns">
+                <ul class="footer-nav">
+                    <li><a href="#">Home.</a></li>
+                    <li><a href="#">Blog.</a></li>
+                    <li><a href="#">Portfolio.</a></li>
+                    <li><a href="#">About.</a></li>
+                    <li><a href="#">Contact.</a></li>
+                    <li><a href="#">Features.</a></li>
+                </ul>
+                <ul class="footer-social">
+                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                    <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+                    <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
+                    <li><a href="#"><i class="fa fa-skype"></i></a></li>
+                    <li><a href="#"><i class="fa fa-rss"></i></a></li>
+                </ul>
+                <ul class="copyright">
+                    <li>Copyright &copy; {% now 'Y' %} MAI</li>
+                    <li>Enjoy!</li>
+                </ul>
+            </div>
+            <div id="go-top" style="display: block;">
+                <a title="Back to Top" href="#">Go To Top</a>
+            </div>
+        </div>
+        {% endblock %}
+
+    </footer>
+
+<!-- Java Script
+================================================== -->
+{% block js_endloads %}
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="{% static 'catalog/js/jquery-1.10.2.min.js' %}"><\/script>')</script>
+    <script type="text/javascript" src="{% static 'catalog/js/jquery-migrate-1.2.1.min.js' %}"></script>
+
+    <script src="{% static 'catalog/js/jquery.flexslider.js' %}"></script>
+    <script src="{% static 'catalog/js/doubletaptogo.js' %}"></script>
+    <script src="{% static 'catalog/js/init.js' %}"></script>
+
+{% endblock %}
+</body>
+
+</html>
