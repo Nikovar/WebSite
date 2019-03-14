@@ -1,0 +1,28 @@
+{% extends 'catalog/skeletons/base.html' %}
+{% load static %}
+
+
+{% block main %}
+    <!-- Content
+    ================================================== -->
+    <div class="content-outer">
+        <div id="page-content" class="row portfolio">
+            <section class="entry cf">
+                <div id="secondary"  class="four columns entry-details">
+                    {% block sidebar %}
+                    {% endblock %}
+                </div> <!-- Secondary End-->
+
+                <div id="primary" class="eight columns portfolio-list">
+                    <div id="portfolio-wrapper" class="bgrid-halves cf">
+                        {% block content %}
+                        {% endblock %}
+                    </div>
+                </div> <!-- primary end-->
+            </section> <!-- end section -->
+
+            {% block content_footer %}
+            {% endblock %}
+        </div> <!-- #page-content end-->
+    </div> <!-- content End-->
+{% endblock %}
