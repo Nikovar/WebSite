@@ -1,0 +1,68 @@
+{% extends 'catalog/skeletons/base_sidebar_left.html' %}
+{% load static %}
+
+
+{% block title %}Author info{% endblock %}
+
+{% block intro %}
+    <!-- Page Title
+    ================================================== -->
+    <div id="page-title">
+        <div class="row">
+            <div class="ten columns centered text-center">
+                <h1>Author info<span>.</span></h1>
+                <p>
+                    Aenean condimentum, lacus sit amet luctus lobortis, dolores et quas molestias excepturi
+                    enim tellus ultrices elit, amet consequat enim elit noneas sit amet luctu.
+                </p>
+            </div>
+        </div>
+    </div> <!-- Page Title End-->
+{% endblock %}
+
+{% block sidebar %}
+    <h1>Geometrics.</h1>
+    <div class="entry-description">
+        <p>
+            Proin gravida nibh vel velit auctor aliquet. Aenean sollicitudin, lorem quis bibendum auctor,
+            nisi elit consequat ipsum, nec sagittis sem nibh id elit. Duis sed odio sit amet nibh vulputate
+            cursus a sit amet mauris. Morbi accumsan ipsum velit. Nam nec tellus a odio tincidunt auctor a
+            ornare odio.
+        </p>
+    </div>
+    <ul class="portfolio-meta-list">
+        <li><span>Date: </span>January 2014</li>
+        <li><span>Client </span>Styleshout</li>
+        <li><span>Skills: </span>Photoshop, Photography, Branding</li>
+    </ul>
+    <a class="button" href="{% url '' %}">View project</a>
+{% endblock %}
+
+{% block content %}
+    <div class="entry-media">
+        <img src="{% static 'catalog/images/portfolio/entries/geometric-backgrounds-01.jpg' %}" alt="" />
+        <img src="{% static 'catalog/images/portfolio/entries/geometric-backgrounds-02.jpg' %}" alt="" />
+    </div>
+    <div class="entry-excerpt">
+        <p>
+            Proin gravida nibh vel velit auctor aliquet. Aenean sollicitudin, lorem quis bibendum auctor,
+            nisi elit consequat ipsum, nec sagittis sem nibh id elit. Duis sed odio sit amet nibh vulputate
+            cursus a sit amet mauris. Morbi accumsan ipsum velit.
+        </p>
+    </div>
+{% endblock %}
+
+{% block content_footer %}
+    <ul class="post-nav cf">
+        <li class="prev">
+            <a href="#" rel="prev">
+                <strong>Previous Author</strong> Duis Sed Odio Sit Amet Nibh Vulputate
+            </a>
+        </li>
+        <li class="next">
+            <a href="#" rel="next">
+                <strong>Next Author</strong> Morbi Elit Consequat Ipsum
+            </a>
+        </li>
+    </ul>
+{% endblock %}
