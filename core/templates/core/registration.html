@@ -1,4 +1,4 @@
-{% extends 'catalog/skeletons/base_sidebar_right.html' %}
+{% extends 'core/skeletons/base_sidebar_right.html' %}
 {% load static %}
 
 
@@ -59,7 +59,7 @@
                 <div>
                     <button class="submit">Submit</button>
                     <span id="image-loader">
-                  <img src="{% static 'catalog/images/loader.gif' %}" alt="" />
+                  <img src="{% static 'core/images/loader.gif' %}" alt="" />
                </span>
                 </div>
             </fieldset>
@@ -74,9 +74,9 @@
 {% endblock %}
 
 {% block sidebar %}
-    {% include 'catalog/blocks/sidebar_widgets/search.html' %}
-    {% include 'catalog/blocks/sidebar_widgets/text.html' %}
-    {% include 'catalog/blocks/sidebar_widgets/contacts.html' %}
-    {% include 'catalog/blocks/sidebar_widgets/photo_stream.html' %}
+    {% include 'core/blocks/sidebar_widgets/search.html' %}
+    {% include 'core/blocks/sidebar_widgets/text.html' %}
+    {% include 'core/blocks/sidebar_widgets/contacts.html' %}
+    {% include 'core/blocks/sidebar_widgets/photo_stream.html' %}
 {% endblock %}
 

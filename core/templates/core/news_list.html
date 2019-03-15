@@ -1,4 +1,4 @@
-{% extends 'catalog/skeletons/base_sidebar_right.html' %}
+{% extends 'core/skeletons/base_sidebar_right.html' %}
 {% load static %}
 
 
@@ -40,7 +40,7 @@
         </div>
         <div class="post-thumb">
             <a href="single.html" title="">
-                <img src="{% static 'catalog/images/post-image/post-image-1300x500-01.jpg' %}" alt="post-image" title="post-image"></a>
+                <img src="{% static 'core/images/post-image/post-image-1300x500-01.jpg' %}" alt="post-image" title="post-image"></a>
         </div>
         <div class="post-content">
             <p>
@@ -70,7 +70,7 @@
         </div>
         <div class="post-thumb">
             <a href="single.html" title="">
-                <img src="{% static 'catalog/images/post-image/post-image-1300x500-02.jpg' %}" alt="post-image" title="post-image">
+                <img src="{% static 'core/images/post-image/post-image-1300x500-02.jpg' %}" alt="post-image" title="post-image">
             </a>
         </div>
         <div class="post-content">
@@ -101,7 +101,7 @@
         </div>
         <div class="post-thumb">
             <a href="single.html" title="">
-                <img src="{% static 'catalog/images/post-image/post-image-1300x500-03.jpg' %}" alt="post-image" title="post-image">
+                <img src="{% static 'core/images/post-image/post-image-1300x500-03.jpg' %}" alt="post-image" title="post-image">
             </a>
         </div>
         <div class="post-content">
@@ -115,14 +115,14 @@
     </article> <!-- post end -->
 
     {% block pagination %}
-        {% include 'catalog/blocks/pagination.html' %}
+        {% include 'core/blocks/pagination.html' %}
     {% endblock %}
 {% endblock %}
 
 {% block sidebar %}
-    {% include 'catalog/blocks/sidebar_widgets/search.html' %}
-    {% include 'catalog/blocks/sidebar_widgets/text.html' %}
-    {% include 'catalog/blocks/sidebar_widgets/categories.html' %}
-    {% include 'catalog/blocks/sidebar_widgets/tag_cloud.html' %}
-    {% include 'catalog/blocks/sidebar_widgets/photo_stream.html' %}
+    {% include 'core/blocks/sidebar_widgets/search.html' %}
+    {% include 'core/blocks/sidebar_widgets/text.html' %}
+    {% include 'core/blocks/sidebar_widgets/categories.html' %}
+    {% include 'core/blocks/sidebar_widgets/tag_cloud.html' %}
+    {% include 'core/blocks/sidebar_widgets/photo_stream.html' %}
 {% endblock %}

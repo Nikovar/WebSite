@@ -1,0 +1,3 @@
+APP_PATH = ''
+
+ARTICLE_TITLE_LEN = 100

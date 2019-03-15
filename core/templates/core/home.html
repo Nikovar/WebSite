@@ -1,4 +1,4 @@
-{% extends 'catalog/skeletons/base.html' %}
+{% extends 'core/skeletons/base.html' %}
 {% load static %}
 
 {# TODO: MAUCA = MAKE ALL URL CORRECT AGAIN #}
@@ -7,7 +7,7 @@
 
 {% block intro %}
     {% block slider %}
-        {% include 'catalog/blocks/slider.html' %}
+        {% include 'core/blocks/slider.html' %}
     {% endblock %}
 {% endblock %}
 
@@ -65,7 +65,7 @@
                 <div class="columns portfolio-item">
                     <div class="item-wrap">
                         <a href="#">
-                            <img alt="" src="{% static 'catalog/images/portfolio/geometrics.jpg' %}">
+                            <img alt="" src="{% static 'core/images/portfolio/geometrics.jpg' %}">
                             <div class="overlay"></div>
                             <div class="link-icon">
                                 <i class="fa fa-link"></i>
@@ -80,7 +80,7 @@
                 <div class="columns portfolio-item">
                     <div class="item-wrap">
                         <a href="#">
-                            <img alt="" src="{% static 'catalog/images/portfolio/console.jpg' %}">
+                            <img alt="" src="{% static 'core/images/portfolio/console.jpg' %}">
                             <div class="overlay"></div>
                             <div class="link-icon"><i class="fa fa-link"></i></div>
                         </a>
@@ -93,7 +93,7 @@
                 <div class="columns portfolio-item s-first">
                     <div class="item-wrap">
                         <a href="#">
-                            <img alt="" src="{% static 'catalog/images/portfolio/camera-man.jpg' %}">
+                            <img alt="" src="{% static 'core/images/portfolio/camera-man.jpg' %}">
                             <div class="overlay"></div>
                             <div class="link-icon">
                                 <i class="fa fa-link"></i>
@@ -108,7 +108,7 @@
                 <div class="columns portfolio-item">
                     <div class="item-wrap">
                         <a href="#">
-                            <img alt="" src="{% static 'catalog/images/portfolio/into-the-light.jpg' %}">
+                            <img alt="" src="{% static 'core/images/portfolio/into-the-light.jpg' %}">
                             <div class="overlay"></div>
                             <div class="link-icon">
                                 <i class="fa fa-link"></i>
@@ -249,11 +249,11 @@
     <!-- Call-To-Action Section
     ================================================== -->
     {% block tagline %}
-        {% include 'catalog/blocks/tagline.html' %}
+        {% include 'core/blocks/tagline.html' %}
     {% endblock %}
     <!-- Tweets Section
     ================================================== -->
     {% block social %}
-        {% include 'catalog/blocks/social.html' %}
+        {% include 'core/blocks/social.html' %}
     {% endblock %}
 {% endblock %}
