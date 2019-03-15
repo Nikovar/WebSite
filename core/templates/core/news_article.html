@@ -1,4 +1,4 @@
-{% extends 'catalog/skeletons/base_sidebar_right.html' %}
+{% extends 'core/skeletons/base_sidebar_right.html' %}
 {% load static %}
 
 
@@ -37,7 +37,7 @@
             </p>
         </div>
         <div class="post-thumb">
-            <img src="{% static 'catalog/images/post-image/post-image-1300x500-01.jpg' %}" alt="post-image" title="post-image">
+            <img src="{% static 'core/images/post-image/post-image-1300x500-01.jpg' %}" alt="post-image" title="post-image">
         </div>
         <div class="post-content">
             <p class="lead">
@@ -72,7 +72,7 @@
             </p>
             <div class="bio cf">
                 <div class="gravatar">
-                    <img src="{% static 'catalog/images/author-img.png' %}" alt="">
+                    <img src="{% static 'core/images/author-img.png' %}" alt="">
                 </div>
                 <div class="about">
                     <h5><a title="Posts by John Doe" href="#" rel="author">John Doe</a></h5>
@@ -104,7 +104,7 @@
                 <ol class="commentlist">
                     <li class="depth-1">
                         <div class="avatar">
-                            <img width="50" height="50" class="avatar" src="{% static 'catalog/images/user-01.png' %}" alt="">
+                            <img width="50" height="50" class="avatar" src="{% static 'core/images/user-01.png' %}" alt="">
                         </div>
                         <div class="comment-info">
                             <cite>Itachi Uchiha</cite>
@@ -122,7 +122,7 @@
                     </li>
                     <li class="thread-alt depth-1">
                         <div class="avatar">
-                            <img width="50" height="50" class="avatar" src="{% static 'catalog/images/user-03.png' %}" alt="">
+                            <img width="50" height="50" class="avatar" src="{% static 'core/images/user-03.png' %}" alt="">
                         </div>
                         <div class="comment-info">
                             <cite>John Doe</cite>
@@ -141,7 +141,7 @@
                         <ul class="children">
                             <li class="depth-2">
                                 <div class="avatar">
-                                    <img width="50" height="50" class="avatar" src="{% static 'catalog/images/user-03.png' %}" alt="">
+                                    <img width="50" height="50" class="avatar" src="{% static 'core/images/user-03.png' %}" alt="">
                                 </div>
                                 <div class="comment-info">
                                     <cite>Kakashi Hatake</cite>
@@ -160,7 +160,7 @@
                                 <ul class="children">
                                     <li class="depth-3">
                                         <div class="avatar">
-                                            <img width="50" height="50" class="avatar" src="{% static 'catalog/images/user-03.png' %}" alt="">
+                                            <img width="50" height="50" class="avatar" src="{% static 'core/images/user-03.png' %}" alt="">
                                         </div>
                                         <div class="comment-info">
                                             <cite>John Doe</cite>
@@ -182,7 +182,7 @@
                     </li>
                     <li class="depth-1">
                         <div class="avatar">
-                            <img width="50" height="50" class="avatar" src="{% static 'catalog/images/user-02.png' %}" alt="">
+                            <img width="50" height="50" class="avatar" src="{% static 'core/images/user-02.png' %}" alt="">
                         </div>
                         <div class="comment-info">
                             <cite>Hinata Hyuga</cite>
@@ -232,9 +232,9 @@
 {% endblock %}
 
 {% block sidebar %}
-    {% include 'catalog/blocks/sidebar_widgets/search.html' %}
-    {% include 'catalog/blocks/sidebar_widgets/text.html' %}
-    {% include 'catalog/blocks/sidebar_widgets/categories.html' %}
-    {% include 'catalog/blocks/sidebar_widgets/tag_cloud.html' %}
-    {% include 'catalog/blocks/sidebar_widgets/photo_stream.html' %}
+    {% include 'core/blocks/sidebar_widgets/search.html' %}
+    {% include 'core/blocks/sidebar_widgets/text.html' %}
+    {% include 'core/blocks/sidebar_widgets/categories.html' %}
+    {% include 'core/blocks/sidebar_widgets/tag_cloud.html' %}
+    {% include 'core/blocks/sidebar_widgets/photo_stream.html' %}
 {% endblock %}

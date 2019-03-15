@@ -1,0 +1,86 @@
+{% load static %}
+
+<!DOCTYPE html>
+<!--[if lt IE 8 ]><html class="no-js ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="no-js ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 8)|!(IE)]><!-->
+<html class="no-js" lang="en"> <!--<![endif]-->
+
+<head>
+    <!--- Basic Page Needs
+    ================================================== -->
+    <title>{% block title %}Some Page{% endblock %}</title>
+
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Mobile Specific Metas
+    ================================================== -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <!-- CSS
+    ================================================== -->
+{% block css %}
+    <link rel="stylesheet" href="{% static 'core/css/default.css' %}">
+    <link rel="stylesheet" href="{% static 'core/css/layout.css' %}">
+    <link rel="stylesheet" href="{% static 'core/css/media-queries.css' %}">
+{% endblock %}
+    <!-- Script
+    ================================================== -->
+{% block js %}
+    <script src="{% static 'core/js/modernizr.js' %}"></script>
+{% endblock %}
+    <!-- Favicons
+    ================================================== -->
+    <link rel="shortcut icon" href="{% static 'core/images/favicon.ico' %}">
+</head>
+
+<body>
+    <header>
+        <div class="row">
+            <div class="twelve columns">
+
+                {% block logo %}
+                <div class="logo">
+                    <a href="#"><img alt="" src="{% static 'core/images/logo.png' %}"></a>
+                </div>
+                {% endblock %}
+
+                {% block menu %}
+                    {% include 'core/blocks/main_menu.html' %}
+                {% endblock %}
+            </div>
+        </div>
+    </header> <!-- Header End -->
+
+        <!-- Intro Section
+    ================================================== -->
+    <section id="intro">
+        {% block intro %}{% endblock %}
+    </section> <!-- Intro Section End-->
+
+    {% block main %}{% endblock %}
+
+    <footer>
+
+        {% block footer %}
+            {% include 'core/blocks/footer.html' %}
+        {% endblock %}
+
+    </footer>
+
+<!-- Java Script
+================================================== -->
+{% block js_endloads %}
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="{% static 'core/js/jquery-1.10.2.min.js' %}"><\/script>')</script>
+    <script type="text/javascript" src="{% static 'core/js/jquery-migrate-1.2.1.min.js' %}"></script>
+
+    <script src="{% static 'core/js/jquery.flexslider.js' %}"></script>
+    <script src="{% static 'core/js/doubletaptogo.js' %}"></script>
+    <script src="{% static 'core/js/init.js' %}"></script>
+
+{% endblock %}
+</body>
+
+</html>
