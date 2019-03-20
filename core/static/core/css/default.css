@@ -48,73 +48,73 @@ table, caption, tbody, tfoot, thead, tr, th, td,
 article, aside, canvas, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section, summary,
 time, mark, audio, video {
-   margin: 0;
-   padding: 0;
-   border: 0;
-   outline: 0;
-   font-size: 100%;
-   vertical-align: baseline;
-   background: transparent;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-size: 100%;
+    vertical-align: baseline;
+    background: transparent;
 }
 
 article,aside,details,figcaption,figure,
 footer,header,hgroup,menu,nav,section {
-   display: block;
+    display: block;
 }
 
 audio,
 canvas,
 video {
-   display: inline-block;
+    display: inline-block;
 }
 
 audio:not([controls]) {
-   display: none;
-   height: 0;
+    display: none;
+    height: 0;
 }
 
 [hidden] { display: none; }
 
 code, kbd, pre, samp {
-   font-family: monospace, serif;
-   font-size: 1em;
+    font-family: monospace, serif;
+    font-size: 1em;
 }
 
 pre {
-   white-space: pre;
-   white-space: pre-wrap;
-   word-wrap: break-word;
+    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }
 
 blockquote, q { quotes: &#8220 &#8220; }
 
 blockquote:before, blockquote:after,
 q:before, q:after {
-   content: '';
-   content: none;
+    content: '';
+    content: none;
 }
 
 ins {
-   background-color: #ff9;
-   color: #000;
-   text-decoration: none;
+    background-color: #ff9;
+    color: #000;
+    text-decoration: none;
 }
 
 mark {
-   background-color: #A7F4F6;
-   color: #555;
+    background-color: #A7F4F6;
+    color: #555;
 }
 
 del { text-decoration: line-through; }
 
 abbr[title], dfn[title] {
-   border-bottom: 1px dotted;
-   cursor: help;
+    border-bottom: 1px dotted;
+    cursor: help;
 }
 
 table {
-   border-collapse: collapse;
-   border-spacing: 0;
+    border-collapse: collapse;
+    border-spacing: 0;
 }
 
 
@@ -130,22 +130,22 @@ table {
 *,
 *:before,
 *:after {
-   -moz-box-sizing: border-box;
-   -webkit-box-sizing: border-box;
-   box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 html { font-size: 62.5%; }
 
 body {
-   background: #fff;
-   font-family: notosans-regular, sans-serif;
-   font-size: 15px;
-   line-height: 30px;
-	color: #838C95;
+    background: #fff;
+    font-family: notosans-regular, sans-serif;
+    font-size: 15px;
+    line-height: 30px;
+    color: #838C95;
 
-   -webkit-font-smoothing: antialiased; /* Fix for webkit rendering */
-	-webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased; /* Fix for webkit rendering */
+    -webkit-text-size-adjust: 100%;
 }
 
 /*  2. Typography
@@ -153,8 +153,8 @@ body {
 --------------------------------------------------------------------- */
 
 h1, h2, h3, h4, h5, h6 {
-   color: #313131;
-	font-family: raleway-bold, sans-serif;
+    color: #313131;
+    font-family: raleway-bold, sans-serif;
 }
 h1 a, h2 a, h3 a, h4 a, h5 a, h6 a { font-weight: inherit; }
 h1 { font-size: 42px; line-height: 48px; margin-bottom: 12px;}
@@ -168,9 +168,9 @@ h6 { font-size: 14px; line-height: 30px; }
 p { margin: 0 0 30px 0; }
 p img { margin: 0; }
 p.lead {
-   font: 20px/36px raleway-regular, sans-serif;
-   margin-bottom: 18px;
-   color: #9FA5AD;
+    font: 20px/36px raleway-regular, sans-serif;
+    margin-bottom: 18px;
+    color: #9FA5AD;
 }
 
 /* for 'em' and 'strong' tags, font-size and line-height should be same with
@@ -181,34 +181,34 @@ small { font-size: 11px; line-height: inherit; }
 
 /*	Blockquotes */
 blockquote {
-   margin: 30px 0px;
-   padding-left: 40px;
-   position: relative;
+    margin: 30px 0px;
+    padding-left: 40px;
+    position: relative;
 }
 blockquote:before {
-   content: "\201C";
-   opacity: 0.45;
-   font-size: 80px;
-   line-height: 0px;
-   margin: 0;
-   font-family: arial, sans-serif;
+    content: "\201C";
+    opacity: 0.45;
+    font-size: 80px;
+    line-height: 0px;
+    margin: 0;
+    font-family: arial, sans-serif;
 
-   position: absolute;
-   top:  30px;
-	left: 0;
+    position: absolute;
+    top:  30px;
+    left: 0;
 }
 blockquote p {
-   font-family: georgia, serif;
-   font-style: italic;
-   padding: 0;
-   font-size: 18px;
-   line-height: 30px;
+    font-family: georgia, serif;
+    font-style: italic;
+    padding: 0;
+    font-size: 18px;
+    line-height: 30px;
 }
 blockquote cite {
-   display: block;
-   font-size: 12px;
-   font-style: normal;
-   line-height: 18px;
+    display: block;
+    font-size: 12px;
+    font-style: normal;
+    line-height: 18px;
 }
 blockquote cite:before { content: "\2014 \0020"; }
 blockquote cite a,
@@ -225,55 +225,55 @@ blockquote cite a:visited { color: #8B9798; border: none }
 /*
 /* --------------------------------------------------------------------- */
 .pull-quote {
-   position: relative;
-	padding: 18px 30px 18px 0px;
+    position: relative;
+    padding: 18px 30px 18px 0px;
 }
 .pull-quote:before,
 .pull-quote:after {
-	height: 1em;
-	opacity: 0.45;
-	position: absolute;
-	font-size: 80px;
+    height: 1em;
+    opacity: 0.45;
+    position: absolute;
+    font-size: 80px;
     font-family: Arial, Sans-Serif, serif;
 }
 .pull-quote:before {
-	content: "\201C";
-	top:  33px;
-	left: 0;
+    content: "\201C";
+    top:  33px;
+    left: 0;
 }
 .pull-quote:after {
-	content: '\201D';
-	bottom: -33px;
-	right: 0;
+    content: '\201D';
+    bottom: -33px;
+    right: 0;
 }
 .pull-quote blockquote {
-   margin: 0;
+    margin: 0;
 }
 .pull-quote blockquote:before {
-   content: none;
+    content: none;
 }
 
 /* Abbreviations */
 abbr {
-   font-family: notosans-bold, sans-serif;
-	font-variant: small-caps;
-	text-transform: lowercase;
-   letter-spacing: .5px;
-	color: gray;
+    font-family: notosans-bold, sans-serif;
+    font-variant: small-caps;
+    text-transform: lowercase;
+    letter-spacing: .5px;
+    color: gray;
 }
 abbr:hover { cursor: help; }
 
 /* drop cap */
 .drop-cap:first-letter {
-	float: left;
-	margin: 0;
-	padding: 14px 6px 0 0;
-	font-size: 84px;
-	font-family: /* Copperplate */ raleway-bold, sans-serif;
-   line-height: 60px;
-	text-indent: 0;
-	background: transparent;
-	color: inherit;
+    float: left;
+    margin: 0;
+    padding: 14px 6px 0 0;
+    font-size: 84px;
+    font-family: /* Copperplate */ raleway-bold, sans-serif;
+    line-height: 60px;
+    text-indent: 0;
+    background: transparent;
+    color: inherit;
 }
 
 hr { border: solid #E3E3E3; border-width: 1px 0 0; clear: both; margin: 11px 0 30px; height: 0; }
@@ -282,14 +282,14 @@ hr { border: solid #E3E3E3; border-width: 1px 0 0; clear: both; margin: 11px 0 3
 /*  3. Links  ------------------------------------------------------- */
 
 a, a:visited {
-   text-decoration: none;
-   outline: 0;
-   color: #11ABB0;
+    text-decoration: none;
+    outline: 0;
+    color: #11ABB0;
 
-   -webkit-transition: color .3s ease-in-out;
-   -moz-transition: color .3s ease-in-out;
-   -o-transition: color .3s ease-in-out;
-   transition: color .3s ease-in-out;
+    -webkit-transition: color .3s ease-in-out;
+    -moz-transition: color .3s ease-in-out;
+    -o-transition: color .3s ease-in-out;
+    transition: color .3s ease-in-out;
 }
 a:hover, a:focus { color: #313131; }
 p a, p a:visited { line-height: inherit; }
@@ -323,36 +323,36 @@ li p { }
 /*
 /* --------------------------------------------------------------------- */
 .stats-tabs {
-   padding: 0;
-   margin: 24px 0;
+    padding: 0;
+    margin: 24px 0;
 }
 .stats-tabs li {
-	display: inline-block;
-	margin: 0 10px 18px 0;
-	padding: 0 10px 0 0;
-	border-right: 1px solid #ccc;
+    display: inline-block;
+    margin: 0 10px 18px 0;
+    padding: 0 10px 0 0;
+    border-right: 1px solid #ccc;
 }
 .stats-tabs li:last-child {
-	margin: 0;
-	padding: 0;
-	border: none;
+    margin: 0;
+    padding: 0;
+    border: none;
 }
 .stats-tabs li a {
-	display: inline-block;
-	font-size: 22px;
-	font-family: notosans-bold, sans-serif;
-   border: none;
-   color: #313131;
+    display: inline-block;
+    font-size: 22px;
+    font-family: notosans-bold, sans-serif;
+    border: none;
+    color: #313131;
 }
 .stats-tabs li a:hover {
-   color:#11ABB0;
+    color:#11ABB0;
 }
 .stats-tabs li a b {
-	display: block;
-	margin: 6px 0 0 0;
-	font-size: 13px;
-	font-family: notosans-regular, sans-serif;
-   color: #8B9798;
+    display: block;
+    margin: 6px 0 0 0;
+    font-size: 13px;
+    font-family: notosans-regular, sans-serif;
+    color: #8B9798;
 }
 
 /* definition list */
@@ -363,90 +363,90 @@ dd { margin: 0 0 0 20px; }
 /* Lining Definition Style Markup */
 .lining dt,
 .lining dd {
-	display: inline;
-	margin: 0;
+    display: inline;
+    margin: 0;
 }
 .lining dt + dt:before,
 .lining dd + dt:before {
-	content: "\A";
-	white-space: pre;
+    content: "\A";
+    white-space: pre;
 }
 .lining dd + dd:before {
-	content: ", ";
+    content: ", ";
 }
 .lining dd:before {
-	content: ": ";
-	margin-left: -0.2em;
+    content: ": ";
+    margin-left: -0.2em;
 }
 
 /* Dictionary Definition Style Markup */
 .dictionary-style dt {
-	display: inline;
-	counter-reset: definitions;
+    display: inline;
+    counter-reset: definitions;
 }
 .dictionary-style dt + dt:before {
-	content: ", ";
-	margin-left: -0.2em;
+    content: ", ";
+    margin-left: -0.2em;
 }
 .dictionary-style dd {
-	display: block;
-	counter-increment: definitions;
+    display: block;
+    counter-increment: definitions;
 }
 .dictionary-style dd:before {
-	content: counter(definitions, decimal) ". ";
+    content: counter(definitions, decimal) ". ";
 }
 
 /* Pagination */
 .pagination {
-   margin: 36px auto;
-   text-align: center;
+    margin: 36px auto;
+    text-align: center;
 }
 .pagination ul li {
-   display: inline-block;
-   margin: 0;
-   padding: 0;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
 }
 .pagination .page-numbers {
-   font: 15px/18px notosans-bold, sans-serif;
-   display: inline-block;
-   padding: 6px 10px;
-   margin-right: 3px;
-   margin-bottom: 6px;
-	color: #6E757C;
-	background-color: #E6E8EB;
+    font: 15px/18px notosans-bold, sans-serif;
+    display: inline-block;
+    padding: 6px 10px;
+    margin-right: 3px;
+    margin-bottom: 6px;
+    color: #6E757C;
+    background-color: #E6E8EB;
 
-	-webkit-transition: all 200ms ease-in-out;
-	-moz-transition: all 200ms ease-in-out;
-	-o-transition: all 200ms ease-in-out;
-	-ms-transition: all 200ms ease-in-out;
-	transition: all 200ms ease-in-out;
+    -webkit-transition: all 200ms ease-in-out;
+    -moz-transition: all 200ms ease-in-out;
+    -o-transition: all 200ms ease-in-out;
+    -ms-transition: all 200ms ease-in-out;
+    transition: all 200ms ease-in-out;
 
-   -moz-border-radius: 3px;
-   -webkit-border-radius: 3px;
-   -khtml-border-radius: 3px;
-	border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -khtml-border-radius: 3px;
+    border-radius: 3px;
 }
 .pagination .page-numbers:hover {
-   background: #838A91;
-   color: #fff;
+    background: #838A91;
+    color: #fff;
 }
 .pagination .current,
 .pagination .current:hover {
-   background-color: #11ABB0;
-   color: #fff;
+    background-color: #11ABB0;
+    color: #fff;
 }
 .pagination .inactive,
 .pagination .inactive:hover {
-   background-color: #E6E8EB;
-	color: #A9ADB2;
+    background-color: #E6E8EB;
+    color: #A9ADB2;
 }
 .pagination .prev, .pagination .next {}
 
 /*  5. Images  --------------------------------------------------------- */
 
 img {
-   max-width: 100%;
-   height: auto;
+    max-width: 100%;
+    height: auto;
 }
 img.pull-right { margin: 12px 0px 0px 18px; }
 img.pull-left { margin: 12px 18px 0px 0px; }
@@ -459,28 +459,28 @@ button,
 input[type="submit"],
 input[type="reset"],
 input[type="button"] {
-   font: 16px/30px notosans-bold, sans-serif;
-   background: #11ABB0;
-   display: inline-block;
-	text-decoration: none;
-   letter-spacing: 0;
-   color: #fff;
-	padding: 12px 24px;
-	margin-bottom: 18px;
-   border: none;
-   cursor: pointer;
-   height: auto;
+    font: 16px/30px notosans-bold, sans-serif;
+    background: #11ABB0;
+    display: inline-block;
+    text-decoration: none;
+    letter-spacing: 0;
+    color: #fff;
+    padding: 12px 24px;
+    margin-bottom: 18px;
+    border: none;
+    cursor: pointer;
+    height: auto;
 
-   -webkit-transition: all .2s ease-in-out;
-	-moz-transition: all .2s ease-in-out;
-	-o-transition: all .2s ease-in-out;
-	-ms-transition: all .2s ease-in-out;
-	transition: all .2s ease-in-out;
+    -webkit-transition: all .2s ease-in-out;
+    -moz-transition: all .2s ease-in-out;
+    -o-transition: all .2s ease-in-out;
+    -ms-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
 
-   -moz-border-radius: 3px;
-   -webkit-border-radius: 3px;
-   -khtml-border-radius: 3px;
-   border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -khtml-border-radius: 3px;
+    border-radius: 3px;
 }
 
 .button:hover,
@@ -488,8 +488,8 @@ button:hover,
 input[type="submit"]:hover,
 input[type="reset"]:hover,
 input[type="button"]:hover {
-   background: #3d4145;
-   color: #fff;
+    background: #3d4145;
+    color: #fff;
 }
 
 .button:active,
@@ -497,8 +497,8 @@ button:active,
 input[type="submit"]:active,
 input[type="reset"]:active,
 input[type="button"]:active {
-   background: #3d4145;
-   color: #fff;
+    background: #3d4145;
+    color: #fff;
 }
 
 .button.full-width,
@@ -506,10 +506,10 @@ button.full-width,
 input[type="submit"].full-width,
 input[type="reset"].full-width,
 input[type="button"].full-width {
-	width: 100%;
-	padding-left: 0 !important;
-	padding-right: 0 !important;
-	text-align: center;
+    width: 100%;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    text-align: center;
 }
 
 /* Fix for odd Mozilla border & padding issues */
@@ -530,23 +530,23 @@ input[type="password"],
 input[type="email"],
 textarea,
 select {
-   display: block;
-   padding: 18px 15px;
-   margin: 0 0 24px 0;
-   border: 0;
-   outline: none;
-   vertical-align: middle;
-   min-width: 260px;
-	max-width: 100%;
-   font-size: 15px;
-   line-height: 24px;
-	color: #647373;
-	background: #D3D9D9;
+    display: block;
+    padding: 18px 15px;
+    margin: 0 0 24px 0;
+    border: 0;
+    outline: none;
+    vertical-align: middle;
+    min-width: 260px;
+    max-width: 100%;
+    font-size: 15px;
+    line-height: 24px;
+    color: #647373;
+    background: #D3D9D9;
 
-   -moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	-khtml-border-radius: 3px;
-	border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -khtml-border-radius: 3px;
+    border-radius: 3px;
 }
 
 /* select { padding: 0;
@@ -557,23 +557,23 @@ input[type="text"]:focus,
 input[type="password"]:focus,
 input[type="email"]:focus,
 textarea:focus {
-   color: #B3B7BC;
-	background-color: #3d4145;
+    color: #B3B7BC;
+    background-color: #3d4145;
 }
 
 textarea { min-height: 200px; }
 
 label,
 legend {
-   font: 16px/24px notosans-bold, sans-serif;
-	margin: 12px 0;
-   color: #3d4145;
-   display: block;
+    font: 16px/24px notosans-bold, sans-serif;
+    margin: 12px 0;
+    color: #3d4145;
+    display: block;
 }
 label span,
 legend span {
-	color: #8B9798;
-   font: 14px/24px notosans-regular, sans-serif;
+    color: #8B9798;
+    font: 16px/24px notosans-regular, sans-serif;
 }
 
 input[type="checkbox"],
@@ -593,9 +593,9 @@ input[type="checkbox"] { display: inline; }
 /* default
 --------------------------------------------------------------- */
 .row {
-   width: 96%;
-   max-width: 1020px;
-   margin: 0 auto;
+    width: 96%;
+    max-width: 1020px;
+    margin: 0 auto;
 }
 /* fixed width for IE8 */
 .ie .row { width: 1000px ; }
@@ -615,10 +615,10 @@ input[type="checkbox"] { display: inline; }
 }
 
 .column, .columns {
-   position: relative;
-   padding: 0 20px;
-   min-height: 1px;
-   float: left;
+    position: relative;
+    padding: 0 20px;
+    min-height: 1px;
+    float: left;
 }
 .column.centered, .columns.centered  {
     float: none;
@@ -704,15 +704,15 @@ properly.
 --------------------------------------------------------------- */
 @media only screen and (max-width: 900px) {
 
-   /* block grids on small screens */
-   .s-bgrid-sixths [class*="column"]   { width: 16.66667%; }
-   .s-bgrid-quarters [class*="column"] { width: 25%; }
-   .s-bgrid-thirds [class*="column"]   { width: 33.33333%; }
-   .s-bgrid-halves [class*="column"]   { width: 50%; }
+    /* block grids on small screens */
+    .s-bgrid-sixths [class*="column"]   { width: 16.66667%; }
+    .s-bgrid-quarters [class*="column"] { width: 25%; }
+    .s-bgrid-thirds [class*="column"]   { width: 33.33333%; }
+    .s-bgrid-halves [class*="column"]   { width: 50%; }
 
-   /* block grids left clearing */
-   .first { clear: none; }
-   .s-first { clear: left; }
+    /* block grids left clearing */
+    .first { clear: none; }
+    .s-first { clear: left; }
 
 }
 
@@ -720,42 +720,42 @@ properly.
 --------------------------------------------------------------- */
 @media only screen and (max-width: 767px) {
 
-   .row {
-	   width: 480px;
-	   margin: 0 auto;
-      padding: 0;
-	}
-   .column, .columns {
-	   width: auto !important;
-	   float: none;
-	   margin-left: 0;
-	   margin-right: 0;
-      padding: 0 30px;
-   }
-   .row .row { width: auto; max-width: none; margin: 0 -30px; }
+    .row {
+        width: 480px;
+        margin: 0 auto;
+        padding: 0;
+    }
+    .column, .columns {
+        width: auto !important;
+        float: none;
+        margin-left: 0;
+        margin-right: 0;
+        padding: 0 30px;
+    }
+    .row .row { width: auto; max-width: none; margin: 0 -30px; }
 
-   [class*="column"] + [class*="column"]:last-child { float: none; }
-   [class*="bgrid"] [class*="column"] + [class*="column"]:last-child { float: none; }
+    [class*="column"] + [class*="column"]:last-child { float: none; }
+    [class*="bgrid"] [class*="column"] + [class*="column"]:last-child { float: none; }
 
-   /* Offsets */
-   .row .offset-1    { margin-left: 0%; }
-   .row .offset-2    { margin-left: 0%; }
-   .row .offset-3    { margin-left: 0%; }
-   .row .offset-4    { margin-left: 0%; }
-   .row .offset-5    { margin-left: 0%; }
-   .row .offset-6    { margin-left: 0%; }
-   .row .offset-7    { margin-left: 0%; }
-   .row .offset-8    { margin-left: 0%; }
-   .row .offset-9    { margin-left: 0%; }
-   .row .offset-10   { margin-left: 0%; }
-   .row .offset-11   { margin-left: 0%; }
+    /* Offsets */
+    .row .offset-1    { margin-left: 0%; }
+    .row .offset-2    { margin-left: 0%; }
+    .row .offset-3    { margin-left: 0%; }
+    .row .offset-4    { margin-left: 0%; }
+    .row .offset-5    { margin-left: 0%; }
+    .row .offset-6    { margin-left: 0%; }
+    .row .offset-7    { margin-left: 0%; }
+    .row .offset-8    { margin-left: 0%; }
+    .row .offset-9    { margin-left: 0%; }
+    .row .offset-10   { margin-left: 0%; }
+    .row .offset-11   { margin-left: 0%; }
 }
 
 /* mobile narrow
 --------------------------------------------------------------- */
 @media only screen and (max-width: 480px) {
 
-   .row { width: auto; }
+    .row { width: auto; }
 
 }
 
@@ -763,7 +763,7 @@ properly.
 --------------------------------------------------------------- */
 @media screen and (min-width: 1200px) {
 
-   .wide .row { max-width: 1180px; }
+    .wide .row { max-width: 1180px; }
 
 }
 
@@ -797,9 +797,9 @@ properly.
 .pull-left    { float: left !important; }
 .pull-right   { float: right !important; }
 .align-center {
-	margin-left: auto !important;
-	margin-right: auto !important;
-	text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    text-align: center !important;
 }
 
 

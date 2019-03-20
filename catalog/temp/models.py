@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
 from django.core.exceptions import ValidationError
 from django.core.files.storage import FileSystemStorage
@@ -29,7 +29,7 @@ class Pack(models.Model):
     book_extras = models.TextField(max_length=LANG_NAME_LEN + SUMMARY_LEN + ISBN_LEN + DELIM_LEN * 2,
                                    help_text='Type by format: <language>{0}<summary>{0}<isbn>'.format(DELIM))
 
-    inserter = models.ForeignKey(User, on_delete=models.CASCADE, related_name='inserted_temp', related_query_name='ins_tmp')
+    inserter = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='inserted_temp', related_query_name='ins_tmp')
     date_joined = models.DateTimeField(default=current_time)
     checked = models.NullBooleanField(default=None)
 

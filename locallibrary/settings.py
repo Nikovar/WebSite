@@ -20,6 +20,7 @@ SECRET_KEY = 'cg#p$g+j9tax!#a3cup@1$8obt2_+&k3q+pmu)5%asj6yjpkag'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+SITE_NAME = "Collaboration"  # :D @gronix
 ALLOWED_HOSTS = ['127.0.0.1']
 
 # Application definition
@@ -34,6 +35,7 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
     'catalog.apps.CatalogConfig',
     'catalog.temp.apps.TempConfig',
+    'accounts.apps.AccountsConfig',
 ]
 
 MIDDLEWARE = [
@@ -93,6 +95,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = 'accounts.CustomUser'
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
@@ -110,7 +113,16 @@ LOGIN_REDIRECT_URL = '/'
 # Add to test email:
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+# Add settings for email backend:
+ENABLE_EMAIL_CONFIRMATION = False  # change to 'True' for enable a magic ;)
+if ENABLE_EMAIL_CONFIRMATION:
+    pass
+    # EMAIL_USE_TLS = True  # TODO: set yours
+    # EMAIL_HOST = 'smtp.gmail.com'  # TODO: set yours
+    # EMAIL_HOST_USER = 'youremail@gmail.com'  # TODO: set yours
+    # EMAIL_HOST_PASSWORD = 'yourpassword'  # TODO: set yours
+    # EMAIL_PORT = 587  # TODO: set yours
+
 # Static files (CSS, JavaScript, Images)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
-

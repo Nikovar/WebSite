@@ -1,0 +1,40 @@
+{% extends 'core/skeletons/base_main.html' %}
+{% load static %}
+
+
+{% block title %}Registration{% endblock %}
+
+{% block intro %}
+
+<!-- Page Title
+================================================== -->
+<div id="page-title">
+    <div class="row">
+        <div class="ten columns centered text-center">
+            <h1>Регистрация<span>.</span></h1>
+            <p>
+                Для доступа ко всем возможностям ресурса необходима регистрация.
+            </p>
+        </div>
+    </div>
+</div> <!-- Page Title End-->
+
+{% endblock %}
+
+
+{% block content %}
+    <h1>Регистрация.</h1>
+    <p class="lead">
+        Обращаем ваше внимаение, что после отправки данных вам нужно будет активировать вашу учётную запись.
+        Для этого переведите 1000 рублей на номер +7 (999) 999-99-99.
+    </p>
+    <p>
+        Для активации учётной записи мы вышлем вам письмо с инструкцией на вашу электронную почту
+        <strike>когда Саня это допилит</strike>.
+    </p>
+
+    {% include 'core/forms/flex.html' with form=form auth_type='reg' %}
+
+{% endblock %}
+
+

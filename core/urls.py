@@ -1,9 +1,11 @@
 from django.urls import path
-
-from django.views.generic import TemplateView  # <- TODO: remove this after creating new views
 from . import views
 
-
+app_name = 'core'
 urlpatterns = [
-    path('', TemplateView.as_view(template_name='core/home.html'))
+    path('', views.main, name='main'),
+    path('reg/', views.auth_handler, {'method': 'normal', 'atype': 'reg'}, name='reg'),
+    path('reg/ajax/', views.auth_handler, {'method': 'ajax', 'atype': 'reg'}, name='reg_ajax'),
+    path('login/', views.auth_handler, {'method': 'normal', 'atype': 'login'}, name='login'),
+    path('login/ajax/', views.auth_handler, {'method': 'ajax', 'atype': 'login'}, name='login_ajax'),
 ]

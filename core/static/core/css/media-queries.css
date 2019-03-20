@@ -368,11 +368,21 @@
 
    /* contact
    ----------------------------------------------------------------------- */
-   #contact-form div, #contact-form .half  {
+   #contact-form .flex-line {flex-direction: column; }
+
+   #contact-form div, #contact-form .half,
+   #contact-form .flex-cell, #contact-form .flex-long-cell  {
       width: 100%;
       float: none !important;
    }
    #contact-form .half { padding: 0; }
+
+   /*#contact-form div, #contact-form .half  {*/
+   /*   width: 100%;*/
+   /*   float: none !important;*/
+   /*}*/
+   /*#contact-form .half { padding: 0; }*/
+
    #contact-form label {
       display: block;
       float: none;
