@@ -1,0 +1,11 @@
+<div class="{% if widget.spread == 2 %}flex-long-cell{% elif widget.spread == 1.5 %}half{% else %}flex-cell{% endif %}">
+    <label for="{{ widget.attrs.id }}">{{ widget.label|default:widget.name }}
+           {% if widget.required %}<span class="required">*</span>{% endif %}
+    </label>
+    <input name="{{ widget.name }}"
+           id="{{ widget.attrs.id }}"
+           type="{{ widget.type }}"
+           {% if widget.value != None %} value="{{ widget.value|stringformat:'s' }}"{% endif %}
+           size="{% if widget.spread == 2 %}70{% else %}35{% endif %}"
+           {% include "core/forms/widgets/base/attrs.html" %}/>
+</div>

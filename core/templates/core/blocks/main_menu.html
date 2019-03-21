@@ -1,8 +1,8 @@
 <nav id="nav-wrap">
-    <a class="mobile-btn" href="#nav-wrap" title="Show navigation">Show navigation</a>
-    <a class="mobile-btn" href="#" title="Hide navigation">Hide navigation</a>
+    <a class="mobile-btn" href="#nav-wrap" title="Show navigation">Показать меню</a>
+    <a class="mobile-btn" href="#" title="Hide navigation">Скрыть меню</a>
     <ul id="nav" class="nav">
-        <li class="current"><a href="#">Home</a></li>
+        <li class="current"><a href="{% url 'core:main' %}">Главная</a></li>
         <li>
             <span>
                 <a href="#">News</a>
@@ -22,6 +22,14 @@
             </ul>
         </li>
         <li><a href="#">FAQ</a></li>
-        <li><a href="#">Registration</a></li>
+        <li>
+            <span>
+                <a href="#">Аутентификация</a>
+            </span>
+            <ul>
+                <li><a href="{% url 'accounts:sign_in' %}">Войти</a></li>
+                <li><a href="{% url 'accounts:sign_up' %}">Зарегистрироваться</a></li>
+            </ul>
+        </li>
     </ul> <!-- end #nav -->
 </nav> <!-- end #nav-wrap -->

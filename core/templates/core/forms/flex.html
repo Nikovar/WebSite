@@ -1,0 +1,46 @@
+{% load static utils %}
+
+<div id="contact-form">
+    <!-- form -->
+    {% if form is not None %}
+    <form name="contactForm" id="contactForm" method="post" action="" data-auth-type="{{ auth_type }}">
+        <fieldset>
+            {% with layout=form.layout  binds=form.bindings %}
+                {% csrf_token %}
+                {% for line in layout %}
+                    <div class="flex-line">
+                        {% for cell in line %}
+                            {% if cell != -1 %}
+                                {% with binded_field=binds|get_item:cell %}
+                                {{ form|get_item:binded_field }}
+                                {% endwith %}
+                            {% else %}
+                                <div class="flex-cell"></div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            {% endwith %}
+            <div>
+                <button class="submit">Отправить</button>
+                <span id="image-loader">
+                    <img src="{% static 'core/images/loader.gif' %}" alt="" />
+                </span>
+            </div>
+        </fieldset>
+    </form> <!-- Form End -->
+    {% endif %}
+    <!-- contact-warning -->
+    <div id="message-warning">
+        {% for err in form.errors %}
+            {{ err|escape }}<br/>
+        {% endfor %}
+        {% for err in form.non_field_errors %}
+            {{ err|escape }}<br/>
+        {% endfor %}
+    </div>
+    <!-- contact-success -->
+    <div id="message-success">
+        <i class="icon-ok"></i>Данные были успешно отправлены!<br />
+    </div>
+</div>

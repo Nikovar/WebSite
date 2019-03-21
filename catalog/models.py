@@ -1,6 +1,6 @@
 from django.utils.timezone import now as current_time
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse  # To generate URLS by reversing URL patterns... @gronix: let this existing for now
 from django.core.files.storage import FileSystemStorage
@@ -108,7 +108,7 @@ class Existences(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE,
                              related_name='symbols',
                              related_query_name='symb')
-    inserter = models.ForeignKey(User, on_delete=models.SET(get_sentinel_user),
+    inserter = models.ForeignKey(get_user_model(), on_delete=models.SET(get_sentinel_user),
                                  related_name='inserted',
                                  related_query_name='ins')
     date_joined = models.DateTimeField(default=current_time)

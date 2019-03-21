@@ -1116,7 +1116,11 @@ ol.commentlist {
    float: left;
    width: 100%;
 }
+
 #contact-form .half { width: 47%; }
+#contact-form .flex-line {display: flex; flex-direction: row; justify-content: space-between; }
+#contact-form .flex-cell {width: 30%; }
+#contact-form .flex-long-cell {width: 65%; }
 #contact-form label {
 	display: inline-block;
 	float: left;
@@ -1135,6 +1139,18 @@ ol.commentlist {
 }
 #contact-form span.required {
 	color: #11ABB0;
+}
+
+#contact-form input.checked:invalid,
+#contact-form input:focus:required:invalid {
+    background-color: #ffd4d4;
+    box-shadow: inset 0 0 0 1px #ff8787;
+}
+
+#contact-form input.checked:valid,
+#contact-form input:focus:required:valid {
+    background-color: #d8ffd4;
+    box-shadow: inset 0 0 0 1px #82ff7a;
 }
 
 #message-warning,
