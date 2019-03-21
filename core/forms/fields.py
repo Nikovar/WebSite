@@ -2,7 +2,7 @@ from django import forms
 from django.core.validators import EmailValidator, RegexValidator
 
 from . import widgets
-from ..utils import dict_merge
+from ..utils import kwargs_merge
 from ..settings import error_messages, translated_error_messages
 
 
@@ -18,7 +18,7 @@ class Name(forms.CharField):
     def __init__(self, data_type='name', cell_size=1, **kwargs):
         self.cell_size = cell_size
         self.data_type = data_type
-        kwargs = dict_merge(kwargs, {'error_messages': translated_error_messages})
+        kwargs = kwargs_merge(kwargs, {'error_messages': translated_error_messages})
         super().__init__(**kwargs)
 
     def widget_attrs(self, widget):
@@ -36,7 +36,7 @@ class Email(forms.CharField):
     def __init__(self, data_type='email', cell_size=1, **kwargs):
         self.cell_size = cell_size
         self.data_type = data_type
-        kwargs = dict_merge(kwargs, {'error_messages': translated_error_messages})
+        kwargs = kwargs_merge(kwargs, {'error_messages': translated_error_messages})
         super().__init__(strip=True, **kwargs)
 
     def widget_attrs(self, widget):
@@ -54,7 +54,7 @@ class Login(forms.CharField):
     def __init__(self, data_type='login', cell_size=1, **kwargs):
         self.cell_size = cell_size
         self.data_type = data_type
-        kwargs = dict_merge(kwargs, {'error_messages': translated_error_messages})
+        kwargs = kwargs_merge(kwargs, {'error_messages': translated_error_messages})
         super().__init__(**kwargs)
 
     def widget_attrs(self, widget):
@@ -72,7 +72,7 @@ class Password(forms.CharField):
     def __init__(self, data_type='password', cell_size=1, **kwargs):
         self.cell_size = cell_size
         self.data_type = data_type
-        kwargs = dict_merge(kwargs, {'error_messages': translated_error_messages})
+        kwargs = kwargs_merge(kwargs, {'error_messages': translated_error_messages})
         super().__init__(**kwargs)
 
     def widget_attrs(self, widget):
