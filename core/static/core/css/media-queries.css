@@ -190,6 +190,11 @@
       /* for transition */
       opacity: 0;
    }
+
+   .wtf {
+      width: 200px;
+   }
+
    ul#nav ul li {
       width: 100%;
       padding: 0;
@@ -200,6 +205,21 @@
       height: 0px;
 	   overflow: hidden;
       border-bottom: 1px dotted #595B6A;
+   }
+
+   .wtf-what {
+      min-height: 42px;
+      height: auto !important;
+   }
+
+   .wtf-double {
+      padding: 8px 0px 0px 0px; 
+      margin: 0px; 
+      font-size: 13px; 
+      color: #ffffff;
+   }
+   .wtf-double:after {
+      left: 0px;
    }
 
    /*On Hover  */
