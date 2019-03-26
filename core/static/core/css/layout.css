@@ -307,6 +307,10 @@ ul#nav ul {
 	transition: opacity .25s ease .1s;
 }
 
+.wtf {
+   width: 200px;
+}
+
 /* Third level sub menu
 ul#nav ul ul {
 	position: absolute;
@@ -333,6 +337,8 @@ ul#nav ul li {
 	transition: height .25s ease .1s;
 }
 
+
+
 /*On Hover */
 ul#nav li:hover > ul { opacity: 1; filter: alpha(opacity=100); }
 ul#nav li:hover > ul li {
@@ -348,6 +354,18 @@ ul#nav ul li a {
 	margin: 0;
    white-space: nowrap;
    font-size: 13px;
+}
+
+.wtf-what {
+   min-height: 42px;
+   height: auto !important;
+}
+
+.wtf-double {
+   padding: 7px 15px; 
+   margin: 0px; 
+   font-size: 13px; 
+   color: #ffffff;
 }
 
 
