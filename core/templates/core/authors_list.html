@@ -1,8 +1,11 @@
 {% extends 'core/skeletons/base_sidebar_left.html' %}
 {% load static %}
 
+{% block nav_bar %}
+    {% with current=3 %}{{ block.super }}{% endwith %}
+{% endblock %}
 
-{% block title %}Authors List{% endblock %}
+{% block title %}Список авторов{% endblock %}
 
 {% block intro %}
     <!-- Page Title
@@ -10,10 +13,9 @@
     <div id="page-title">
         <div class="row">
             <div class="ten columns centered text-center">
-                <h1>Authors List<span>.</span></h1>
+                <h1>Авторы<span>.</span></h1>
                 <p>
-                    Aenean condimentum, lacus sit amet luctus lobortis, dolores et quas molestias excepturi
-                    enim tellus ultrices elit, amet consequat enim elit noneas sit amet luctu.
+                    Ниже представлен список авторов, чьи произведения существуют в нашей базе на данный момент.
                 </p>
             </div>
         </div>
@@ -21,96 +23,29 @@
 {% endblock %}
 
 {% block sidebar %}
-    <h1>Our Portfolio.</h1>
+    <h1>Список представленных авторов</h1>
     <p class="lead">
-        Proin gravida nibh vel velit auctor aliquet. Aenean sollicitudin, lorem quis bibendum auctor,
-        nisi elit consequat ipsum, nec sagittis sem nibh id elit. Duis sed odio sit amet nibh.
+        Нажмите на интересующего вас автора, чтобы посмотреть его биографию и список представленных произведений.
     </p>
     <p>
-        Proin gravida nibh vel velit auctor aliquet. Aenean sollicitudin, lorem quis bibendum auctor,
-        nisi elit consequat ipsum, nec sagittis sem nibh id elit. Duis sed odio sit amet nibh vulputate
-        cursus a sit amet mauris. Morbi accumsan ipsum velit. Nam nec tellus a odio tincidunt auctor a
-        ornare odio.
+        Вы можете осуществить поиск по имени или фамилии автора. Но пока эта возможность один хер не работает :D
     </p>
 {% endblock %}
 
 {% block content %}
-    <div class="columns portfolio-item first">
-        <div class="item-wrap">
-            <a href="{% url 'author' %}">
-                <img alt="" src="{% static 'core/images/portfolio/geometrics.jpg' %}">
-                <div class="overlay"></div>
-                <div class="link-icon"><i class="fa fa-link"></i></div>
-            </a>
-            <div class="portfolio-item-meta">
-                <h5><a href="{% url 'author' %}">Geometrics</a></h5>
-                <p>Illustrration</p>
+    {% for author in authors %}
+        <div class="columns portfolio-item{% if forloop.counter0|divisibleby:2 %} first{% endif %}">
+            <div class="item-wrap">
+                <a href="{% url 'core:author' author.id %}">
+                    <img alt="" src="{% static 'core/images/portfolio/geometrics.jpg' %}">
+                    <div class="overlay"></div>
+                    <div class="link-icon"><i class="fa fa-link"></i></div>
+                </a>
+                <div class="portfolio-item-meta">
+                    <h5><a href="{% url 'core:author' author.id %}">{{ author.last_name }}</a></h5>
+                    <p>{{ author.first_name }}</p>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="columns portfolio-item">
-        <div class="item-wrap">
-            <a href="{% url 'author' %}">
-                <img alt="" src="{% static 'core/images/portfolio/console.jpg' %}">
-                <div class="overlay"></div>
-                <div class="link-icon"><i class="fa fa-link"></i></div>
-            </a>
-            <div class="portfolio-item-meta">
-                <h5><a href="{% url 'author' %}">Console</a></h5>
-                <p>Web Development</p>
-            </div>
-        </div>
-    </div>
-    <div class="columns portfolio-item first">
-        <div class="item-wrap">
-            <a href="{% url 'author' %}">
-                <img alt="" src="{% static 'core/images/portfolio/camera-man.jpg' %}">
-                <div class="overlay"></div>
-                <div class="link-icon"><i class="fa fa-link"></i></div>
-            </a>
-            <div class="portfolio-item-meta">
-                <h5><a href="{% url 'author' %}">Camera Man</a></h5>
-                <p>Photography</p>
-            </div>
-        </div>
-    </div>
-    <div class="columns portfolio-item">
-        <div class="item-wrap">
-            <a href="{% url 'author' %}">
-                <img alt="" src="{% static 'core/images/portfolio/into-the-light.jpg' %}">
-                <div class="overlay"></div>
-                <div class="link-icon"><i class="fa fa-link"></i></div>
-            </a>
-            <div class="portfolio-item-meta">
-                <h5><a href="{% url 'author' %}">Into The Light</a></h5>
-                <p>Photography</p>
-            </div>
-        </div>
-    </div>
-    <div class="columns portfolio-item first">
-        <div class="item-wrap">
-            <a href="{% url 'author' %}">
-                <img alt="" src="{% static 'core/images/portfolio/farmerboy.jpg' %}">
-                <div class="overlay"></div>
-                <div class="link-icon"><i class="fa fa-link"></i></div>
-            </a>
-            <div class="portfolio-item-meta">
-                <h5><a href="{% url 'author' %}">Farmer Boy</a></h5>
-                <p>Branding</p>
-            </div>
-        </div>
-    </div>
-    <div class="columns portfolio-item">
-        <div class="item-wrap">
-            <a href="{% url 'author' %}">
-                <img alt="" src="{% static 'core/images/portfolio/coffee-cup.jpg' %}">
-                <div class="overlay"></div>
-                <div class="link-icon"><i class="fa fa-link"></i></div>
-            </a>
-            <div class="portfolio-item-meta">
-                <h5><a href="{% url 'author' %}">Coffee Cup</a></h5>
-                <p>Web Design</p>
-            </div>
-        </div>
-    </div>
+    {% endfor %}
 {% endblock %}

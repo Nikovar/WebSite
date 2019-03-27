@@ -45,8 +45,8 @@
                 </div>
                 {% endblock %}
 
-                {% block menu %}
-                    {% include 'core/blocks/main_menu.html' %}
+                {% block nav_bar %}
+                    {% include 'core/blocks/nav_bar.html' with current=current|default:0 %}
                 {% endblock %}
             </div>
         </div>

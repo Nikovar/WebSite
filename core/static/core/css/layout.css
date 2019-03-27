@@ -356,16 +356,18 @@ ul#nav ul li a {
    font-size: 13px;
 }
 
-.wtf-what {
+li.wtf-what {
    min-height: 42px;
    height: auto !important;
+    display: flex;
 }
 
 .wtf-double {
-   padding: 7px 15px; 
+   padding: 12px 15px;
    margin: 0px; 
-   font-size: 13px; 
+   font-size: 10pt;
    color: #ffffff;
+    align-items: stretch;
 }
 
 

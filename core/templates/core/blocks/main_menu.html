@@ -1,45 +1,40 @@
-<nav id="nav-wrap">
-    <a class="mobile-btn" href="#nav-wrap" title="Show navigation">Показать меню</a>
-    <a class="mobile-btn" href="#" title="Hide navigation">Скрыть меню</a>
-    <ul id="nav" class="nav">
-        <li class="current"><a href="{% url 'core:main' %}">Главная</a></li>
-        <li>
-            <span>
-                <a href="#">News</a>
-            </span>
-            <ul>
-                <li><a href="#">News List</a></li>
-                <li><a href="#">News Article</a></li>
-            </ul>
-        </li>
-        <li>
-            <span>
-                <a href="#">Authors</a>
-            </span>
-            <ul>
-                <li><a href="#">Authors List</a></li>
-                <li><a href="#">Author</a></li>
-            </ul>
-        </li>
-        <li><a href="#">FAQ</a></li>
-        <li>
-            <span>
-                <a href="#">Аутентификация</a>
-            </span>
-            <ul class='wtf'>
-                <li class='wtf-what'>
-                    <div class='wtf-double'>
-                        Фон Аль Ибрагим Туда-Сюда-Обратно Алексей Алексеевич Пушшшшшш
-                    </div>
-                </li>
-                <li class='wtf-what'>
-                    <div class='wtf-double'>
-                        Фон Аль И
-                    </div>
-                </li>
-                <li><a href="{% url 'accounts:sign_in' %}">Войти</a></li>
-                <li><a href="{% url 'accounts:sign_up' %}">Зарегистрироваться</a></li>
-            </ul>
-        </li>
-    </ul> <!-- end #nav -->
-</nav> <!-- end #nav-wrap -->
+ <ul id="nav" class="nav">
+    <li{% if current == 1 %} class="current"{% endif %}><a href="{% url 'core:main' %}">Главная</a></li>
+{#    <li{% if current == 2 %} class="current"{% endif %}>#}
+{#        <span>#}
+{#            <a href="#">News</a>#}
+{#        </span>#}
+{#        <ul>#}
+{#            <li><a href="#">News List</a></li>#}
+{#            <li><a href="#">News Article</a></li>#}
+{#        </ul>#}
+{#    </li>#}
+    <li{% if current == 3 %} class="current"{% endif %}>
+        <a href="{% url 'core:authors_list' %}">Список авторов</a>
+    </li>
+{#    <li{% if current == 4 %} class="current"{% endif %}><a href="#">FAQ</a></li>#}
+    <li{% if current == 5 %} class="current"{% endif %}>
+        <span>
+            <a href="#">
+                {% if user.is_authenticated %}
+                    Меню пользователя
+                {% else %}
+                    Аутентификация
+                {% endif %}
+            </a>
+        </span>
+        <ul {% if user.is_authenticated %}class='wtf'{% endif %}>
+            {% if user.is_authenticated %}
+            <li class='wtf-what'>
+                <div class='wtf-double'>
+                    {{ user.get_full_name }}
+                </div>
+            </li>
+            <li><a href="{% url 'accounts:sign_out' %}">Выйти</a></li>
+            {% else %}
+            <li><a href="{% url 'accounts:sign_in' %}">Войти</a></li>
+            <li><a href="{% url 'accounts:sign_up' %}">Зарегистрироваться</a></li>
+            {% endif %}
+        </ul>
+    </li>
+</ul> <!-- end #nav -->

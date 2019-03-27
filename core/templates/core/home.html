@@ -1,9 +1,11 @@
 {% extends 'core/skeletons/base.html' %}
 {% load static %}
 
-{# TODO: MAUCA = MAKE ALL URL CORRECT AGAIN #}
-
 {% block title %}Home Page!{% endblock %}
+
+{% block nav_bar %}
+    {% with current=1 %}{{ block.super }}{% endwith %}
+{% endblock %}
 
 {% block intro %}
     {% block slider %}
@@ -12,114 +14,75 @@
 {% endblock %}
 
 {% block main %}
-    <!-- Info Section
-    ================================================== -->
-
-    {% block info %}
-        <section id="info">
-            <div class="row">
-                <div class="bgrid-quarters s-bgrid-halves">
-                    <div class="columns">
-                        <h2>Clean & Modern.</h2>
-                        <p>
-                            Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec
-                            elit. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
-                        </p>
-                    </div>
-                    <div class="columns">
-                        <h2>Responsive.</h2>
-                        <p>
-                            Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec
-                            elit. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
-                        </p>
-                    </div>
-                    <div class="columns s-first">
-                        <h2>HTML5 + CSS3.</h2>
-                        <p>
-                            Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec
-                            elit. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
-                        </p>
-                    </div>
-                    <div class="columns">
-                        <h2>Free of Charge.</h2>
-                        <p>
-                            Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec
-                            elit. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section> <!-- Info Section End-->
-    {% endblock %}
-
     <!-- Works Section
     ================================================== -->
-
     {% block pin_board %}
     <section id="works">
         <div class="row">
             <div class="twelve columns align-center">
-                <h1>Some of our recent works.</h1>
+                <h1>Последние книги были добавлены к авторам:</h1>
             </div>
             <div id="portfolio-wrapper" class="bgrid-quarters s-bgrid-halves">
-                <div class="columns portfolio-item">
-                    <div class="item-wrap">
-                        <a href="#">
-                            <img alt="" src="{% static 'core/images/portfolio/geometrics.jpg' %}">
-                            <div class="overlay"></div>
-                            <div class="link-icon">
-                                <i class="fa fa-link"></i>
+                {% for author in authors %}
+                    <div class="columns portfolio-item{% if forloop.counter|divisibleby:3 %} s-first{% endif %}">
+                        <div class="item-wrap">
+                            <a href="{% url 'core:author' author.id %}">
+                                <img alt="" src="{% static 'core/images/portfolio/geometrics.jpg' %}">
+                                <div class="overlay"></div>
+                                <div class="link-icon">
+                                    <i class="fa fa-link"></i>
+                                </div>
+                            </a>
+                            <div class="portfolio-item-meta">
+                                <h5><a href="{% url 'core:author' author.id %}">{{ author.last_name }}</a></h5>
+                                <p>{{ author.first_name }}</p>
                             </div>
-                        </a>
-                        <div class="portfolio-item-meta">
-                            <h5><a href="#">Geometrics</a></h5>
-                            <p>Illustration</p>
                         </div>
                     </div>
-                </div>
-                <div class="columns portfolio-item">
-                    <div class="item-wrap">
-                        <a href="#">
-                            <img alt="" src="{% static 'core/images/portfolio/console.jpg' %}">
-                            <div class="overlay"></div>
-                            <div class="link-icon"><i class="fa fa-link"></i></div>
-                        </a>
-                        <div class="portfolio-item-meta">
-                            <h5><a href="#">Console</a></h5>
-                            <p>Web Development</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="columns portfolio-item s-first">
-                    <div class="item-wrap">
-                        <a href="#">
-                            <img alt="" src="{% static 'core/images/portfolio/camera-man.jpg' %}">
-                            <div class="overlay"></div>
-                            <div class="link-icon">
-                                <i class="fa fa-link"></i>
-                            </div>
-                        </a>
-                        <div class="portfolio-item-meta">
-                            <h5><a href="#">Camera Man</a></h5>
-                            <p>Photography</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="columns portfolio-item">
-                    <div class="item-wrap">
-                        <a href="#">
-                            <img alt="" src="{% static 'core/images/portfolio/into-the-light.jpg' %}">
-                            <div class="overlay"></div>
-                            <div class="link-icon">
-                                <i class="fa fa-link"></i>
-                            </div>
-                        </a>
-                        <div class="portfolio-item-meta">
-                            <h5><a href="#">Into The Light</a></h5>
-                            <p>Branding</p>
-                        </div>
-                    </div>
-                </div>
+{#                    <div class="columns portfolio-item">#}
+{#                        <div class="item-wrap">#}
+{#                            <a href="#">#}
+{#                                <img alt="" src="{% static 'core/images/portfolio/console.jpg' %}">#}
+{#                                <div class="overlay"></div>#}
+{#                                <div class="link-icon"><i class="fa fa-link"></i></div>#}
+{#                            </a>#}
+{#                            <div class="portfolio-item-meta">#}
+{#                                <h5><a href="#">Console</a></h5>#}
+{#                                <p>Web Development</p>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                    <div class="columns portfolio-item s-first">#}
+{#                        <div class="item-wrap">#}
+{#                            <a href="#">#}
+{#                                <img alt="" src="{% static 'core/images/portfolio/camera-man.jpg' %}">#}
+{#                                <div class="overlay"></div>#}
+{#                                <div class="link-icon">#}
+{#                                    <i class="fa fa-link"></i>#}
+{#                                </div>#}
+{#                            </a>#}
+{#                            <div class="portfolio-item-meta">#}
+{#                                <h5><a href="#">Camera Man</a></h5>#}
+{#                                <p>Photography</p>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                    <div class="columns portfolio-item">#}
+{#                        <div class="item-wrap">#}
+{#                            <a href="#">#}
+{#                                <img alt="" src="{% static 'core/images/portfolio/into-the-light.jpg' %}">#}
+{#                                <div class="overlay"></div>#}
+{#                                <div class="link-icon">#}
+{#                                    <i class="fa fa-link"></i>#}
+{#                                </div>#}
+{#                            </a>#}
+{#                            <div class="portfolio-item-meta">#}
+{#                                <h5><a href="#">Into The Light</a></h5>#}
+{#                                <p>Branding</p>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+                {% endfor %}
             </div>
         </div>
     </section> <!-- Works Section End-->
@@ -131,7 +94,7 @@
     <section id="journal">
         <div class="row">
             <div class="twelve columns align-center">
-                <h1>Our latest posts and rants.</h1>
+                <h1>Здесь должны быть последние новости.</h1>
             </div>
         </div>
         <div class="blog-entries">
@@ -245,6 +208,44 @@
             </article> <!-- Entry End -->
         </div> <!-- Entries End -->
     </section> <!-- Journal Section End-->
+    {% endblock %}
+        <!-- Info Section
+    ================================================== -->
+    {% block info %}
+        <section id="info">
+            <div class="row">
+                <div class="bgrid-quarters s-bgrid-halves">
+                    <div class="columns">
+                        <h2>Здесь могла быть ваша реклама</h2>
+                        <p>
+                            Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec
+                            elit. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+                        </p>
+                    </div>
+                    <div class="columns">
+                        <h2>Или что-нибудь тематическое...</h2>
+                        <p>
+                            Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec
+                            elit. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+                        </p>
+                    </div>
+                    <div class="columns s-first">
+                        <h2>Хз, что-нибудь!</h2>
+                        <p>
+                            Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec
+                            elit. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+                        </p>
+                    </div>
+                    <div class="columns">
+                        <h2>;)</h2>
+                        <p>
+                            Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec
+                            elit. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section> <!-- Info Section End-->
     {% endblock %}
     <!-- Call-To-Action Section
     ================================================== -->

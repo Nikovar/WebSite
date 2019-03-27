@@ -1,78 +1,28 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model, authenticate, login as django_login
 from django.core.exceptions import ValidationError
 from django.conf import settings as site_settings
 from django.http import HttpResponse
 
 from accounts.settings import CHECK_ERRORS
+from catalog.models import Author
 from .forms import RegForm, LoginForm
 from .utils import error_packer
 
 
 def main(request):
-    return render(request, 'core/home.html')
+    authors = Author.objects.all()[:4]
+    return render(request, 'core/home.html', {'authors': authors})
 
 
-# def reg(request):
-#     # if we come here after redirect from specific url, then we store POST data and get redirected as GET query
-#     # TODO: remove this hack when you realize user cabinet:
-#     form_data = request.POST if request.method == 'POST' else request.session.get('_reg_form_data', False)
-#     if form_data:
-#         checked, form = reg_form_process(form_data)
-#         if checked:
-#             return redirect('/')
-#     else:
-#         form = RegForm()
-#     return render(request, 'core/auth/reg.html', {'form': form})
-#
-#
-# def reg_ajax(request):
-#     # if we come here after redirect from specific url, then we store POST data and get redirected as GET query
-#     # TODO: remove this hack when you realize user cabinet:
-#     form_data = request.POST if request.method == 'POST' else request.session.get('_reg_form_data', False)
-#     if form_data:
-#         checked, form = reg_form_process(form_data)
-#         if checked:
-#             return HttpResponse("OK")
-#         errors_list = error_packer(form.errors)
-#         return HttpResponse('<br/>'.join(errors_list))
-#     return HttpResponse("You need pass data for register.", status=403, content_type="text/plain")
-#
-#
-# def login(request):
-#     # if we come here after redirect from specific url, then we store POST data and get redirected as GET query
-#     # TODO: remove this hack when you realize user cabinet:
-#     form_data = request.POST if request.method == 'POST' else request.session.get('_auth_form_data', False)
-#     if form_data:
-#         form = LoginForm(request.POST)
-#         if form.is_valid():
-#             username = form.cleaned_data['login']
-#             password = form.cleaned_data['password']
-#
-#             # TODO: check whether it proper work when user is inactive, i.e. 'user.is_active = False'.
-#             user = authenticate(username=username, password=password)
-#             if user is None:
-#                 form.add_error(field=None, error=ValidationError(message=CHECK_ERRORS['auth'], code='auth_fail'))
-#
-#             if len(form.errors) == 0:
-#                 django_login(request, user)
-#                 return redirect('core:main')
-#     else:
-#         form = LoginForm()
-#     return render(request, 'core/auth/login.html', {'form': form})
-#
-#
-# def login_ajax(request):
-#     # if we come here after redirect from specific url, then we store POST data and get redirected as GET query
-#     # TODO: remove this hack when you realize user cabinet:
-#     form_data = request.POST if request.method == 'POST' else request.session.get('_auth_form_data', False)
-#     if form_data:
-#         ckecked, form = auth_form_process(form_data)
-#         if ckecked:
-#             return HttpResponse('OK')
-#         errors_list = error_packer(form.errors)
-#         return HttpResponse('<br/>'.join(errors_list))
-#     return HttpResponse("You need pass data for login.", status=403, content_type="text/plain")
+def authors_list(request):
+    authors = Author.objects.all()
+    return render(request, 'core/authors_list.html', {'authors': authors})
+
+
+def author(request, author_id):
+    author = get_object_or_404(Author, id=author_id)
+    return render(request, 'core/author.html', {'author': author})
 
 
 def auth_handler(request, method, atype):
