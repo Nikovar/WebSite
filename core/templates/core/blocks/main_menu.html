@@ -13,6 +13,12 @@
         <a href="{% url 'core:authors_list' %}">Список авторов</a>
     </li>
 {#    <li{% if current == 4 %} class="current"{% endif %}><a href="#">FAQ</a></li>#}
+    <li{% if current == 4 %} class="current"{% endif %}>
+        <span><a href="{% url 'editor:select' %}">Редактор</a></span>
+        <ul>
+            <li><a href="{% url 'editor:main' book_id=1 %}">Посадочная страница</a></li>
+        </ul>
+    </li>
     <li{% if current == 5 %} class="current"{% endif %}>
         <span>
             <a href="#">

@@ -6,7 +6,7 @@ from django.http import HttpResponse
 
 from accounts.settings import CHECK_ERRORS
 from catalog.models import Author
-from .forms import RegForm, LoginForm
+from .forms import Registration, Login
 from .utils import error_packer
 
 
@@ -21,8 +21,8 @@ def authors_list(request):
 
 
 def author(request, author_id):
-    author = get_object_or_404(Author, id=author_id)
-    return render(request, 'core/author.html', {'author': author})
+    author_ = get_object_or_404(Author, id=author_id)
+    return render(request, 'core/author.html', {'author': author_})
 
 
 def auth_handler(request, method, atype):
@@ -44,12 +44,12 @@ def auth_handler(request, method, atype):
             if checked:
                 return redirect('/')
         else:
-            form = LoginForm() if atype == 'login' else RegForm()
+            form = Login() if atype == 'login' else Registration()
         return render(request, 'core/auth/{}.html'.format(atype), {'form': form})
 
 
 def reg_form_process(request_data):
-    form = RegForm(request_data)
+    form = Registration(request_data)
     if form.is_valid():
         data = form.cleaned_data
         data.pop('password_repeat')  # this one should exist, but dont needed
@@ -72,7 +72,7 @@ def reg_form_process(request_data):
 
 
 def login_form_process(request_data, request):
-    form = LoginForm(request_data)
+    form = Login(request_data)
     if form.is_valid():
         username = form.cleaned_data['login']
         password = form.cleaned_data['password']
