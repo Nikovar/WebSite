@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'catalog.apps.CatalogConfig',
     'catalog.temp.apps.TempConfig',
     'accounts.apps.AccountsConfig',
+    'editor.apps.EditorConfig'
 ]
 
 MIDDLEWARE = [

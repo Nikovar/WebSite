@@ -1,4 +1,5 @@
 {% extends 'core/skeletons/base.html' %}
+{% load static %}
 
 {% block title %}Редактор{% endblock %}
 
@@ -25,10 +26,9 @@
 {% block main %}
     <div>
         <p>
-            Тут будет окошко редактора, йопт.
+            Тут будет окошко редактора.
         </p>
-        <div id="vue-main">
-
-        </div>
+        <div id="vue-main"></div>
+        <script src="{% static 'editor/app.build.js' %}"></script>
     </div>
 {% endblock %}

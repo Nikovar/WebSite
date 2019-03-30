@@ -1,0 +1,9 @@
+
+
+Работа с фронтовой частью
+1) Установка
+wget -qO- https://deb.nodesource.com/setup_8.x | sudo -E bash -
+sudo apt-get install -y nodejs
+sudo npm install -g webpack-cli --save-dev
+sudo npm uninstall -g webpack
+sudo npm install
