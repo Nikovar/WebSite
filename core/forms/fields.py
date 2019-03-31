@@ -11,6 +11,11 @@ validate_login = RegexValidator(r'^[\w\-.@+]{4,50}$', message=error_messages['lo
 validate_password = RegexValidator(r'^.{6,50}$', message=error_messages['password'], code='invalid')
 
 
+class DynamicChoiceField(forms.ChoiceField):
+    def clean(self, value):
+        return value
+
+
 class Name(forms.CharField):
     widget = widgets.Name
     default_validators = [validate_name]

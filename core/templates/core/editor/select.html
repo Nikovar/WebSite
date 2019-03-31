@@ -2,6 +2,30 @@
 
 {% block title %}Редактор{% endblock %}
 
+{% block css %}
+    {{ block.super }}
+    <style>
+        form.centered {
+            max-width: 400px;
+        }
+        form.centered select {
+            width: 100%;
+        }
+        .disabled, button.disabled:hover {
+            background: #e6e6e6;
+            color: #c1bebe;
+        }
+        label.disabled {
+            background: unset;
+        }
+        ul#message-warning {
+            display: block;
+            padding: 12px 12px 1px;
+            margin: unset;
+        }
+    </style>
+{% endblock %}
+
 {% block nav_bar %}
     {% with current=4 %}{{ block.super }}{% endwith %}
 {% endblock %}
@@ -22,11 +46,78 @@
 {% endblock %}
 
 {% block content %}
-    {{ form|default_if_none:"Формы пока нет =(" }}
+    <form action="{% url 'editor:select' %}" method="post" class="column centered align-center">
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit" class="disabled" disabled>Редактировать</button>
+    </form>
 {% endblock %}
 
-<script type="text/javascript">
-    (function(){
-        console.log('YEA.')
-    })(jQuery);
-</script>
+{% block js_endloads %}
+    {{ block.super }}
+    <script>
+        (function(){
+            $('ul.errorlist').attr('id', 'message-warning');
+            $('#id_author').change(loadBooks);
+            $('form label:last').addClass('disabled');
+        })(jQuery);
+
+        function loadBooks(){
+            let $author = $(this), value = $author.val();
+            if(value.length === 0){
+                disableControls();
+            }else
+            if(typeof value === 'string' && value.length <= 10){
+                console.log('2');
+                let $form = $(this).parent();
+                let $token_field = $('[name=csrfmiddlewaretoken]', $form);
+                $.ajax({
+                    url: 'ajax/',
+                    method: 'POST',
+                    type: 'json',
+                    data: ['author='+value, "csrfmiddlewaretoken="+$token_field.val()].join('&'),
+                    success: change_books,
+                    error: show_errors
+                });
+                console.log('3');
+            }
+        }
+
+        function change_books(data){
+            if($.isEmptyObject(data)){
+                $('#id_book').html('');
+                disableControls();
+                return;
+            }
+            let options = [];
+            $.each(data, function(id, book_title){
+                options.push('<option value='+id+'>'+book_title+'</option>')
+            });
+            $('#id_book').html(options.join());
+            enableControls();
+        }
+
+        // TODO: REALIZE AND CHECK THIS!!!
+        function show_errors(jqXHR, textStatus, errorThrown){
+            console.log('xyi')
+        }
+
+        function enableControls(){
+            let $bookSelect = $('#id_book');
+            if($bookSelect.prop('disabled') === true){
+                $bookSelect.prop('disabled', false).removeClass('disabled');
+                $('label[for='+$bookSelect.attr('id')+']').removeClass('disabled');
+                $('form button:disabled').prop('disabled', false).removeClass('disabled');
+            }
+        }
+
+        function disableControls() {
+            let $bookSelect = $('#id_book');
+            if ($bookSelect.prop('disabled') === false) {
+                $bookSelect.html('').prop('disabled', true).addClass('disabled');
+                $('label[for=' + $bookSelect.attr('id') + ']').addClass('disabled');
+                $('form button').prop('disabled', true).addClass('disabled');
+            }
+        }
+    </script>
+{% endblock %}

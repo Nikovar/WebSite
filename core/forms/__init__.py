@@ -1,18 +1,24 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django import forms
+
+from catalog.models import Author
+
 from . import fields
 from ..settings import complex_error_messages
-from catalog.models import Author, Book
 
 
 class BookChoosing(forms.Form):
-    author = forms.ModelChoiceField(Author.objects.all(), empty_label=None)
-    book = forms.ModelChoiceField(Book.objects.all(), empty_label=None)
+    author = forms.ModelChoiceField(Author.objects.all(), empty_label="Выберите автора")
+    book = fields.DynamicChoiceField(widget=forms.Select(attrs={'class': 'disabled', 'disabled': 'true'}),
+                                                         choices=(('-1', ''),))
 
     def clean(self):
         cleaned_data = super().clean()
         book = cleaned_data.get('book')
         author = cleaned_data.get('author')
-        if book.author != author:
+        try:
+            author.book_set.get(id=int(book))
+        except ObjectDoesNotExist:
             raise forms.ValidationError(message=complex_error_messages['author_book'], code="invalid")
 
 
