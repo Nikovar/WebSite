@@ -153,4 +153,9 @@ class Addresses(models.Model):
         sword_pos = self.start + self.word_shift
         eword_pos = sword_pos + self.word_len
         end = self.start + self.end_shift
-        return '({} - [{}..{}] - {})'.format(self.start, sword_pos, eword_pos, end)
+        return '{} ({} - [{}..{}] - {}): {}'.format(self.existence.book.title,
+                                                    self.start,
+                                                    sword_pos,
+                                                    eword_pos,
+                                                    end,
+                                                    self.existence.symbol.name)
