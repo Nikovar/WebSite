@@ -1,7 +1,8 @@
-import Vue from 'vue'
-import Temp from './Temp.vue'
- 
-new Vue({
-    el: '#vue-main',
-    render: h => h(Temp)
-})
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+
+ReactDOM.render(
+    <h1>Как тебе такое, Александр Парубчишин???</h1>, 
+    document.getElementById('react-main')
+);
