@@ -1,8 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Provider } from "react-redux";
+import { createStore, applyMiddleware } from "redux";
+import thunk from "redux-thunk";
+import EditorApp from './reducers';
+import Main from './Main';
 
+
+let store = createStore(EditorApp, applyMiddleware(thunk));
 
 ReactDOM.render(
-    <h1>Как тебе такое, Александр Парубчишин???</h1>, 
+    <Provider store={store}>
+        <Main />
+    </Provider>,
     document.getElementById('react-main')
 );
