@@ -3,8 +3,8 @@ function getOptions(input, href, additional) {
         .then((response) => {
             return response.json()
         }).then((json) => {
-            return {options: json}
+            return json
         });
 }
 
-export const getSymbolOptions = (input, book_id) => getOptions(input, '/get_symbols_api', `book_id=${book_id}`);
+export const getSymbolOptions = (input, book_id) => getOptions(input, '/editor/symbols', `book_id=${book_id}`);

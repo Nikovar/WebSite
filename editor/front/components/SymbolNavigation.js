@@ -1,38 +1,33 @@
 import React, {Component} from 'react';
 import Select from 'react-select';
+import AsyncSelect from 'react-select/lib/Async';
 import { getSymbolOptions } from 'utils';
-
-const options = [
-  { value: 'chocolate', label: 'Chocolate' },
-  { value: 'strawberry', label: 'Strawberry' },
-  { value: 'vanilla', label: 'Vanilla' }
-];
 
 
 export default class SymbolNavigation extends Component {
-    state = {
-        selectedOption: null,
-    }
-
-    handleChange = (selectedOption) => {
-        this.setState({ selectedOption });
-        console.log(`Option selected:`, selectedOption);
+    constructor(props) {
+        super(props);
+        this.state = {
+            symbol: null
+        }
     }
 
     getSymbolOptions = (input) => {
-        const { book_id } = this.props;
-        return getSymbolOptions(book_id, input)
+        let { book_id } = this.props;
+        book_id = 1;  // Это нужно удалить, после того, как будут готовы reducers and actions
+        return getSymbolOptions(input, book_id);
     };
 
     render() {
-        const { selectedOption } = this.state;
 
         return(
             <div>
-                <Select
-                    value={selectedOption}
-                    onChange={this.handleChange}
-                    options={options}
+                <AsyncSelect
+                    value={this.state.symbol}
+                    loadOptions={this.getSymbolOptions}
+                    onChange={(symbol) => {
+                        this.setState({symbol});
+                    }}
                 />
                 <p>Навигация по символам!</p>
             </div>

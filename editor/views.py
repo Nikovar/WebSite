@@ -1,11 +1,11 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponse
 from json import dumps
 
-from core.forms import BookChoosing
-from catalog.models import Author, Book
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
 
+from catalog.models import Author, Book
+from core.forms import BookChoosing
 from .settings import error_messages
 
 
@@ -42,7 +42,30 @@ def main(request, book_id):
 
 def symbols(request):
     # TODO: realize api functionality here
-    return HttpResponse(dumps({'symbols': 'not realized yet'}), status=200, content_type='text/plain')
+
+    # "Поправил" вьюху для теста. В value нужно будет сувать id символа
+    # в label - его название
+
+    book_id = request.GET.get('book_id')
+    q = request.GET.get('q')  # то, что ввёл пользователь (часть названия символа)
+
+    test_symbols = [
+        {
+            'value': 1,
+            'label': 'Elephant'
+        },
+        {
+            'value': 2,
+            'label': 'Dog',
+        },
+        {
+            'value': 3,
+            'label': 'Oil'
+        }
+    ]
+
+    result = [symbol for symbol in test_symbols if q in symbol['label']]
+    return JsonResponse(result, safe=False)
 
 
 def addresses(request):
