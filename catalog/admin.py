@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Author, Genre, Book, Language, Symbol, SymbolDescription, Existences, Addresses
+from .models import Author, Genre, Book, Language, Symbol, SymbolDescription, Existence, Location
 
 admin.site.register(Genre)
 admin.site.register(Language)
@@ -8,8 +8,8 @@ admin.site.register(Book)
 admin.site.register(Author)
 admin.site.register(Symbol)
 admin.site.register(SymbolDescription)
-admin.site.register(Existences)
-admin.site.register(Addresses)
+admin.site.register(Existence)
+admin.site.register(Location)
 
 # == @gronix: i don't know is needed it all, but at this time i just comment it out ==
 

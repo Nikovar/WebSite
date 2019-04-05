@@ -77,22 +77,22 @@ class Book(models.Model):
         return self.title
 
 
+class SymbolDescription(models.Model):
+    text = models.TextField(max_length=SYMBOL_DESCRIPTION_LEN)
+
+    def __str__(self):
+        return self.text if len(self.text) <= 20 else '{}...'.format(self.text[:17])
+
+
 class Symbol(models.Model):
     occurs_in = models.ManyToManyField(Book,
-                                       through='Existences',
+                                       through='Existence',
                                        through_fields=('symbol', 'book'))
+    description = models.ForeignKey(SymbolDescription, on_delete=models.SET_NULL, related_name='symbols', null=True)
     name = models.CharField(max_length=SYMBOL_NAME_LEN)
 
     def __str__(self):
         return self.name
-
-
-class SymbolDescription(models.Model):
-    symbol = models.ForeignKey(Symbol, on_delete=models.CASCADE, related_name='descriptions')
-    text = models.TextField(max_length=SYMBOL_DESCRIPTION_LEN)
-
-    def __str__(self):
-        return self.text
 
 
 # this one only for the correct listing of symbol occurrences, which owner has left @gronix
@@ -101,16 +101,16 @@ def get_sentinel_user():
 
 
 # Standard Django's implementation for many-to-many relation with extra fields @gronix
-class Existences(models.Model):
+class Existence(models.Model):
     symbol = models.ForeignKey(Symbol, on_delete=models.CASCADE,
-                               related_name='occurs',
-                               related_query_name='occ')
+                               related_name='existences',
+                               related_query_name='exists')
     book = models.ForeignKey(Book, on_delete=models.CASCADE,
-                             related_name='symbols',
-                             related_query_name='symb')
+                             related_name='existence_set',
+                             related_query_name='ex_set')
     inserter = models.ForeignKey(get_user_model(), on_delete=models.SET(get_sentinel_user),
                                  related_name='inserted',
-                                 related_query_name='ins')
+                                 related_query_name='insert')
     date_joined = models.DateTimeField(default=current_time)
 
     def __str__(self):
@@ -119,10 +119,10 @@ class Existences(models.Model):
 
 
 # DISCLAIMER: All that is written below is subject to discussion. ;). @gronix
-class Addresses(models.Model):
-    existence = models.ForeignKey(Existences, on_delete=models.CASCADE,
-                                  related_name='addressees',
-                                  related_query_name='adr')
+class Location(models.Model):
+    existence = models.ForeignKey(Existence, on_delete=models.CASCADE,
+                                  related_name='locations',
+                                  related_query_name='located')
     start = models.PositiveIntegerField(help_text="Start of entry from file beginnings")
     word_shift = models.PositiveSmallIntegerField(help_text="Shift to Symbol existence from entry start address")
     word_len = models.PositiveSmallIntegerField(help_text="Length of Symbol (or his synonym) inside context")
