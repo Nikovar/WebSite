@@ -139,29 +139,36 @@ def _check_crossing(board, addrs, is_left):
     return furthest.start + furthest.end_shift if is_left else furthest.start
 
 
-def _get_chunk(adrs, text, chunk_size, page):
+def _get_chunk(adrs, text, chunk_size, page, checking):
     left_right = [page * chunk_size, (page + 1) * chunk_size]
     assert left_right[0] < len(text)
 
     for i, board in enumerate(left_right):
         if board != 0 and board != len(text):
-            new_board = _check_crossing(board, adrs, bool(i))
+            new_board = _check_crossing(board, adrs, bool(i)) if checking else None
             if new_board is not None:
                 left_right[i] = new_board
     left, right = left_right
-    adrs = adrs.filter(start__gte=left, end_shift__lte=right - F('start'))
+
+    if checking:
+        adrs = adrs.filter(start__gte=left, end_shift__lte=right - F('start'))
     return text[left: right], adrs
 
 
 def _get_data(request, book, page=0):
     text = get_text(book.file)
+    adrs, checking = {}, False
 
     prefetch_related_objects([book], 'existence_set')
-    adrs = reduce(lambda x, y: x | y, [existence.locations.all() for existence in book.existence_set.all()])
-    chunk, adrs = _get_chunk(adrs, text, BOOK_CHUNK_SIZE, page)
+    all_book_existences = book.existence_set.all()
+    if len(all_book_existences) > 0:
+        checking = True
+        adrs = reduce(lambda x, y: x | y, [existence.locations.all() for existence in all_book_existences])
+    chunk, adrs = _get_chunk(adrs, text, BOOK_CHUNK_SIZE, page, checking)
 
-    qs = adrs.annotate(symb=F('existence__symbol')).order_by('start').values_list('symb', 'start', 'word_shift',
-                                                                                  'word_len', 'end_shift')
-    adrs = {tup[0]: tup[1:] for tup in qs}
+    if checking:
+        qs = adrs.annotate(symb=F('existence__symbol')).order_by('start').values_list('symb', 'start', 'word_shift',
+                                                                                      'word_len', 'end_shift')
+        adrs = {tup[0]: tup[1:] for tup in qs}
     return {'existences': adrs, 'text': chunk, 'page': page}
 
