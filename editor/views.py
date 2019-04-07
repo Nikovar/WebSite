@@ -39,16 +39,23 @@ def select(request, method):
 
 
 def main(request, book_id):
+    # TODO: Обработать ситуацию, когда нет нужной книги. 
+    # Можно просто в интерфейсе вывести div с соответствующим сообщением
     book = get_object_or_404(Book, id=book_id)
     context = _get_data(request, book)
 
-    qs = book.symbol_set.annotate(descr=F('description__text')).values_list('id', 'name', 'descr')
-    symbs = {tup[0]: tup[1:] for tup in qs}
+    symbols = book.symbol_set.annotate(descr=F('description__text')).values_list('id', 'name', 'descr')
 
-    context['symbols'] = symbs
+    symbols = [{
+        'value': symbol[0],
+        'label': symbol[1] or '',
+        # 'description': symbol[2] or ''
+    } for symbol in symbols]
+
+    context['symbols'] = symbols
     # TODO: remove 'main_test' from there...
-    # return render(request, 'core/editor/main.html', context)
-    return render(request, 'core/editor/main_test.html', context)
+    return render(request, 'core/editor/main.html', context)
+    # return render(request, 'core/editor/main_test.html', context)
 
 
 def get_page(request):
@@ -88,22 +95,14 @@ def symbols(request):
     book_id = request.GET.get('book_id')
     q = request.GET.get('q')  # то, что ввёл пользователь (часть названия символа)
 
-    test_symbols = [
-        {
-            'value': 1,
-            'label': 'Elephant'
-        },
-        {
-            'value': 2,
-            'label': 'Dog',
-        },
-        {
-            'value': 3,
-            'label': 'Oil'
-        }
-    ]
+    book = Book.objects.get(id=book_id)
+    symbols = book.symbol_set.filter(name__contains=q).values_list('id', 'name')
 
-    result = [symbol for symbol in test_symbols if q in symbol['label']]
+    result = [{
+        'value': symbol[0],
+        'label': symbol[1],
+    } for symbol in symbols]
+
     return JsonResponse(result, safe=False)
 
 
@@ -164,11 +163,10 @@ def _get_data(request, book, page=0):
     if len(all_book_existences) > 0:
         checking = True
         adrs = reduce(lambda x, y: x | y, [existence.locations.all() for existence in all_book_existences])
-    chunk, adrs = _get_chunk(adrs, text, BOOK_CHUNK_SIZE, page, checking)
+    text_chunk, adrs = _get_chunk(adrs, text, BOOK_CHUNK_SIZE, page, checking)
 
     if checking:
         qs = adrs.annotate(symb=F('existence__symbol')).order_by('start').values_list('symb', 'start', 'word_shift',
                                                                                       'word_len', 'end_shift')
         adrs = {tup[0]: tup[1:] for tup in qs}
-    return {'existences': adrs, 'text': chunk, 'page': page}
-
+    return {'existences': adrs, 'text_chunk': text_chunk.replace('\n', ' '), 'page': page, 'book_id': book.pk}

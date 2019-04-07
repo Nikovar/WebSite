@@ -25,7 +25,24 @@
 {# TODO: start using standard template styles #}
 {% block main %}
     <div>
+        {% csrf_token %}
+        
+        <label>SUMBOLS<textarea>{{ symbols }}</textarea></label>
+        <label>EXISTENCES IN CHUNK<textarea>{{ existences }}</textarea></label>
+
+        
         <div id="react-main"></div>
         <script src="{% static 'editor/app.build.js' %}"></script>
+        <script type="text/javascript">
+            {% autoescape off %}
+
+                window.editorRender(
+                    {{ book_id }}, 
+                    {{ page }},
+                    {{ symbols }},
+                    '{{ text_chunk }}'      
+                );
+            {% endautoescape %}
+        </script>
     </div>
 {% endblock %}

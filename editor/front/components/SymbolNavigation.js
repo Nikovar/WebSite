@@ -1,36 +1,45 @@
 import React, {Component} from 'react';
 import Select from 'react-select';
-import AsyncSelect from 'react-select/lib/Async';
-import { getSymbolOptions } from 'utils';
+import {connect} from 'react-redux';
+import {selectSymbol} from '../actions'
 
 
-export default class SymbolNavigation extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            symbol: null
-        }
-    }
-
-    getSymbolOptions = (input) => {
-        let { book_id } = this.props;
-        book_id = 1;  // Это нужно удалить, после того, как будут готовы reducers and actions
-        return getSymbolOptions(input, book_id);
-    };
+class SymbolNavigation extends Component {
+    
+    onSelectSymbol = (symbol) => {
+        console.log('YOUR ACTION:', symbol)
+        this.props.selectSymbol(symbol)
+    }    
 
     render() {
-
+        console.log('symbols', this.props.symbol)
         return(
             <div>
-                <AsyncSelect
-                    value={this.state.symbol}
-                    loadOptions={this.getSymbolOptions}
-                    onChange={(symbol) => {
-                        this.setState({symbol});
-                    }}
+                <Select
+                    value={this.props.symbol}
+                    onChange={this.onSelectSymbol}
+                    options={this.props.symbols}
                 />
                 <p>Навигация по символам!</p>
             </div>
         )
     }
 }
+
+const mapStateToProps = state => {
+    return {
+        book_id: state.editor.book_id,
+        page: state.editor.page,
+        text_chunk: state.editor.text_chunk,
+        symbols: state.editor.symbols,
+        symbol: state.editor.symbol
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        selectSymbol: (symbol) => dispatch(selectSymbol)
+    };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SymbolNavigation);
