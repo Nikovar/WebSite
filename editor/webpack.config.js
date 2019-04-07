@@ -36,6 +36,7 @@ var plugins = [
     },
     new ExtractTextPlugin({
         filename: function(getPath) {
+            console.log('STYLES.CSS', getPath('styles.css'))
             return getPath('styles.css')
         },
         allChunks: true

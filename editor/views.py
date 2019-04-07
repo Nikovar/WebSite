@@ -1,3 +1,5 @@
+import math
+
 from json import dumps
 from functools import reduce
 
@@ -42,14 +44,14 @@ def main(request, book_id):
     # TODO: Обработать ситуацию, когда нет нужной книги. 
     # Можно просто в интерфейсе вывести div с соответствующим сообщением
     book = get_object_or_404(Book, id=book_id)
-    context = _get_data(request, book)
+    context = _get_book_data(request, book)
 
     symbols = book.symbol_set.annotate(descr=F('description__text')).values_list('id', 'name', 'descr')
 
     symbols = [{
         'value': symbol[0],
         'label': symbol[1] or '',
-        # 'description': symbol[2] or ''
+        'description': symbol[2] or ''
     } for symbol in symbols]
 
     context['symbols'] = symbols
@@ -58,14 +60,14 @@ def main(request, book_id):
     # return render(request, 'core/editor/main_test.html', context)
 
 
-def get_page(request):
-    book_id = request.POST.get('book', None)
-    page_num = request.POST.get('page', None)
-    if book_id is None or page_num is None:
+def get_page(request, book_id, page):
+
+    if book_id is None or page is None:
         return HttpResponseBadRequest("You should pass identifier of certain book with required page in it.")
+
     try:
-        book_id, page_num = int(book_id), int(page_num)
-        assert book_id >= 1, page_num >= 0
+        book_id, page = int(book_id), int(page)
+        assert book_id >= 1, page >= 1
         book = Book.objects.get(id=book_id)
     except (TypeError, AssertionError):
         return HttpResponseBadRequest("You should pass correct book identifier and page number.")
@@ -73,10 +75,11 @@ def get_page(request):
         return HttpResponseNotFound("Can't find book by passed identifier.")
 
     try:
-        context = _get_data(request, book, page_num)
+        context = _get_book_data(request, book, page)
     except AssertionError:
         return HttpResponse('""', content_type='application/json')
-    return HttpResponse(dumps(context), content_type='application/json')
+
+    return JsonResponse({'status': True, 'data': context}, safe=False)
 
 
 # Commented this because of all related symbols we already pass in "main" view. So i don't know if this needed.
@@ -117,9 +120,14 @@ def addresses(request):
         Symbol.objects.get(id=symbol_id)  # only for checking on "DoesNotExist" error
 
         exis_ids = Book.objects.get(id=book_id).existence_set.filter(symbol_id=symbol_id).values_list('id', flat=True)
-        qs = Location.objects.filter(existence_id__in=exis_ids).order_by('start').values_list('start', 'word_shift',
-                                                                                              'word_len', 'end_shift')
+        qs = Location.objects.filter(existence_id__in=exis_ids).order_by('start').values_list(
+            'start', 
+            'word_shift',
+            'word_len', 
+            'end_shift'
+        )
         adrs = list(qs)
+
     except (TypeError, AssertionError):
         return HttpResponseBadRequest("You should pass correct identifiers.")
     except ObjectDoesNotExist:
@@ -132,14 +140,16 @@ def _check_crossing(board, addrs, is_left):
     crossed = addrs.filter(start__lte=board, end_shift__gt=board - F('start'))
     if len(crossed) == 0:
         return None
+
     crossed = crossed.annotate(_board=Sum(F('start') + F('end_shift') - board, output_field=IntegerField()))
     order_field = '_board' if is_left else '-_board'
     furthest = crossed.order_by(order_field)[0]
+
     return furthest.start + furthest.end_shift if is_left else furthest.start
 
 
 def _get_chunk(adrs, text, chunk_size, page, checking):
-    left_right = [page * chunk_size, (page + 1) * chunk_size]
+    left_right = [(page-1) * chunk_size, page * chunk_size]
     assert left_right[0] < len(text)
 
     for i, board in enumerate(left_right):
@@ -154,7 +164,7 @@ def _get_chunk(adrs, text, chunk_size, page, checking):
     return text[left: right], adrs
 
 
-def _get_data(request, book, page=0):
+def _get_book_data(request, book, page=1):
     text = get_text(book.file)
     adrs, checking = {}, False
 
@@ -163,10 +173,23 @@ def _get_data(request, book, page=0):
     if len(all_book_existences) > 0:
         checking = True
         adrs = reduce(lambda x, y: x | y, [existence.locations.all() for existence in all_book_existences])
+
     text_chunk, adrs = _get_chunk(adrs, text, BOOK_CHUNK_SIZE, page, checking)
 
     if checking:
-        qs = adrs.annotate(symb=F('existence__symbol')).order_by('start').values_list('symb', 'start', 'word_shift',
-                                                                                      'word_len', 'end_shift')
+        qs = adrs.annotate(symb=F('existence__symbol')).order_by('start').values_list(
+            'symb', 
+            'start', 
+            'word_shift',
+            'word_len', 
+            'end_shift'
+        )
         adrs = {tup[0]: tup[1:] for tup in qs}
-    return {'existences': adrs, 'text_chunk': text_chunk.replace('\n', ' '), 'page': page, 'book_id': book.pk}
+
+    return {
+        'existences': adrs, 
+        'text_chunk': text_chunk.replace('\n', ' '), 
+        'page': page, 
+        'number_pages': math.ceil(len(text) / BOOK_CHUNK_SIZE),
+        'book_id': book.pk
+    }

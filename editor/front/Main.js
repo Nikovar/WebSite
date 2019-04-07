@@ -7,11 +7,11 @@ class Main extends Component {
     render() {
         return(
             <div className='container'>
-                <Row>
-                    <Col sm={4}>
+                <Row id='row-editor'>
+                    <Col xs={6} md={3} lg={3}>
                         <SymbolNavigation />
                     </Col>
-                    <Col sm={8}>
+                    <Col xs={6} md={9} lg={9}>
                         <PageWindow />
                     </Col>
                 </Row>

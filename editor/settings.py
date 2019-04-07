@@ -4,4 +4,4 @@ error_messages = {
     'author': ' - Некорректный автор. Проверьте свой выбор.',
 }
 
-BOOK_CHUNK_SIZE = 4000
+BOOK_CHUNK_SIZE = 2000

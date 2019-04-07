@@ -1,13 +1,16 @@
 import C from './constants';
+import { errorMessageToString } from 'utils';
 
 
-export function init(book_id, page, symbols, text_chunk) {
+export function init(book_id, page, number_pages, symbols, existences, text_chunk) {
     return {
         type: C.MENU_INIT,
         data: {
             book_id, 
             page, 
+            number_pages,
             symbols,
+            existences,
             text_chunk
         }
     }
@@ -27,5 +30,36 @@ export function selectSymbol(symbol) {
                 symbol
             }
         });
+    }
+}
+
+export function updatePage(page) {
+    return (dispatch, getState) => {
+
+        dispatch({
+            type: C.UPDATE_PAGE_REQUEST
+        });
+
+        $.ajax({
+            url: `get_page/${page}`,
+            type: 'GET',
+            dataType: 'json',
+            success: data => {
+                if (data.status) {
+                    dispatch({
+                        type: C.UPDATE_PAGE_SUCCESS,
+                        data: {
+                            page: page,
+                            text_chunk: data.data.text_chunk
+                        }
+                    })
+                } else {
+                    dispatch({type: C.UPDATE_PAGE_FAILURE, error: errorMessageToString(data.errors)})
+                }
+            },
+            error: () => {0
+                dispatch({type: C.UPDATE_PAGE_FAILURE, error: errorMessageToString()})
+            }
+        })
     }
 }

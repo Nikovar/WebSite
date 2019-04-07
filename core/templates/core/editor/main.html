@@ -13,10 +13,7 @@
     <div id="page-title">
         <div class="row">
             <div class="ten columns centered text-center">
-                <h1>Редактор<span>.</span></h1>
-                <p>
-                    Здесь посадочная страница для редактора.
-                </p>
+                <h1>Редактор (посадочная страница)</h1>
             </div>
         </div>
     </div> <!-- Page Title End-->
@@ -26,11 +23,6 @@
 {% block main %}
     <div>
         {% csrf_token %}
-        
-        <label>SUMBOLS<textarea>{{ symbols }}</textarea></label>
-        <label>EXISTENCES IN CHUNK<textarea>{{ existences }}</textarea></label>
-
-        
         <div id="react-main"></div>
         <script src="{% static 'editor/app.build.js' %}"></script>
         <script type="text/javascript">
@@ -39,7 +31,9 @@
                 window.editorRender(
                     {{ book_id }}, 
                     {{ page }},
+                    {{ number_pages}},
                     {{ symbols }},
+                    {{ existences }},
                     '{{ text_chunk }}'      
                 );
             {% endautoescape %}
