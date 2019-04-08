@@ -19,9 +19,13 @@ class SymbolNavigation extends Component {
     }    
 
     render() {
-        console.log('existences', this.props.existences)
-        console.log(this.props.existences[this.state.symbol.value])
-        console.log('symbol', this.state.symbol)
+        const {symbol} = this.state;
+        const {existences} = this.props;
+        const existences_by_symbol = symbol ? existences[symbol.value] : null;
+
+        console.log('existences', existences)    
+        console.log('symbol', symbol)
+        console.log('TTTd=', existences_by_symbol)
 
         return(
             <div>

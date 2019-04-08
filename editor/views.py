@@ -184,7 +184,9 @@ def _get_book_data(request, book, page=1):
             'word_len', 
             'end_shift'
         )
-        adrs = {tup[0]: tup[1:] for tup in qs}
+        # поправить. Если у одного символа приедет 2 вхождения, то одно перезатрёт другое.
+        adrs = {tup[0]: list(tup[1:]) for tup in qs}
+        print('adrs =', adrs)
 
     return {
         'existences': adrs, 

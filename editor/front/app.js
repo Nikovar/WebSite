@@ -15,6 +15,7 @@ let store = createStore(EditorApp, applyMiddleware(thunk));
 
 
 function editorRender(book_id, page, number_pages, symbols, existences, text_chunk='') {
+    console.log('in editorRender:', existences)
     store.dispatch(init(book_id, page, number_pages, symbols, existences, text_chunk));
 
     render(

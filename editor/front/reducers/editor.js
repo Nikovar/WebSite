@@ -7,7 +7,7 @@ const initialState = {
     number_pages: null,
     symbols: [],
     symbol: null,
-    existences: null,
+    existences: {},
     text_chunk: '',
     error: '',
     isFetching: false,
