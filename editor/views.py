@@ -1,7 +1,7 @@
 import math
-
-from json import dumps
+from collections import defaultdict
 from functools import reduce
+from json import dumps
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import F, Sum, IntegerField
@@ -11,7 +11,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 from catalog.models import Author, Book, Location, Symbol
 from catalog.utils import get_text
-
 from core.forms import BookChoosing
 from .settings import error_messages, BOOK_CHUNK_SIZE
 
@@ -46,7 +45,7 @@ def main(request, book_id):
     book = get_object_or_404(Book, id=book_id)
     context = _get_book_data(request, book)
 
-    symbols = book.symbol_set.annotate(descr=F('description__text')).values_list('id', 'name', 'descr')
+    symbols = book.symbol_set.values_list('id', 'name', 'description__text')
 
     symbols = [{
         'value': symbol[0],
@@ -55,9 +54,7 @@ def main(request, book_id):
     } for symbol in symbols]
 
     context['symbols'] = symbols
-    # TODO: remove 'main_test' from there...
     return render(request, 'core/editor/main.html', context)
-    # return render(request, 'core/editor/main_test.html', context)
 
 
 def get_page(request, book_id, page):
@@ -177,19 +174,14 @@ def _get_book_data(request, book, page=1):
     text_chunk, adrs = _get_chunk(adrs, text, BOOK_CHUNK_SIZE, page, checking)
 
     if checking:
-        qs = adrs.annotate(symb=F('existence__symbol')).order_by('start').values_list(
-            'symb', 
-            'start', 
-            'word_shift',
-            'word_len', 
-            'end_shift'
-        )
-        # поправить. Если у одного символа приедет 2 вхождения, то одно перезатрёт другое.
-        adrs = {tup[0]: list(tup[1:]) for tup in qs}
-        print('adrs =', adrs)
+        qs = adrs.order_by('start').values_list('existence__symbol', 'start', 'word_shift', 'word_len', 'end_shift')
+
+        adrs = defaultdict(list)
+        for address in qs:
+            adrs[address[0]].append(list(address[1:]))
 
     return {
-        'existences': adrs, 
+        'existences': dict(adrs),  # чтобы корректно пробрасывать из шаблона в react.
         'text_chunk': text_chunk.replace('\n', ' '), 
         'page': page, 
         'number_pages': math.ceil(len(text) / BOOK_CHUNK_SIZE),

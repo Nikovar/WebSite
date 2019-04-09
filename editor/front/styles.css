@@ -1,5 +1,6 @@
 #page-window {
     background-color: #fff;
+    color: #000;
     padding: 10px;
     max-height: 600px;
     overflow: auto;
