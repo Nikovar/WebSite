@@ -1,3 +1,4 @@
+
 import C from './constants';
 import { errorMessageToString } from 'utils';
 
@@ -27,8 +28,16 @@ export function selectSymbol(symbol) {
         dispatch({
             type: C.SELECT_SYMBOL, 
             data: {
-                symbol
+                symbol: symbol
             }
+        });
+    }
+}
+
+export function toggleSymbolAddition() {
+    return (dispatch, getState) => {
+        dispatch({
+            type: C.SYMBOL_ADDITION
         });
     }
 }

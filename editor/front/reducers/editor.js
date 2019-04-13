@@ -11,6 +11,7 @@ const initialState = {
     text_chunk: '',
     error: '',
     isFetching: false,
+    symbolAddition: false
 };
 
 
@@ -50,6 +51,12 @@ export default function editor(state=initialState, action) {
             return {
                 ...state,
                 ...action.data
+            }
+
+        case C.SYMBOL_ADDITION:
+            return {
+                ...state,
+                symbolAddition: !state.symbolAddition
             }
 
         default:
