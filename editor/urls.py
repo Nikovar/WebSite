@@ -10,4 +10,5 @@ urlpatterns = [
 	path('symbols', views.symbols, name='symbols'),
 	path('<int:book_id>/get_page/<int:page>', views.get_page, name='get_page'),
 	path('addresses/', views.addresses, name='addresses'),
+    path('<int:book_id>/tmp_save_symbol/', views.tmp_save_symbol, name='tmp_save_symbol'),
 ]

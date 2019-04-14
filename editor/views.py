@@ -187,3 +187,11 @@ def _get_book_data(request, book, page=1):
         'number_pages': math.ceil(len(text) / BOOK_CHUNK_SIZE),
         'book_id': book.pk
     }
+
+
+def tmp_save_symbol(request, book_id, *args, **kwargs):
+    print('\n\n')
+    print('context', request.POST)  # вот сюда приедет всё, что нужно
+    print('page', request.POST['page'])
+    print('\n\n')
+    return JsonResponse({'status': True}, safe=False)

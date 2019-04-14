@@ -11,7 +11,7 @@ const initialState = {
     text_chunk: '',
     error: '',
     isFetching: false,
-    symbolAddition: false
+    symbolAddition: false,
 };
 
 
@@ -22,7 +22,7 @@ export default function editor(state=initialState, action) {
         case C.UPDATE_PAGE_REQUEST: 
             return {
                 ...state,
-                ifFetching: true,
+                isFetching: true,
                 error: ''
             }
 
@@ -38,7 +38,28 @@ export default function editor(state=initialState, action) {
                 ...state,
                 error: action.error,
                 isFetching: false
+            }
 
+
+        case C.SYMBOL_SAVE_REQUEST: 
+            return {
+                ...state,
+                isFetching: true,
+                error: ''
+            }
+
+        case C.SYMBOL_SAVE_SUCCESS:
+            return {
+                ...state,
+                ...action.data,
+                isFetching: false,
+            }
+
+        case C.SYMBOL_SAVE_FAILURE:
+            return {
+                ...state,
+                error: action.error,
+                isFetching: false
             }
 
         case C.MENU_INIT: 

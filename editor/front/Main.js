@@ -2,14 +2,14 @@ import React, {Component} from 'react';
 import { SymbolNavigation, PageWindow, AddSymbolForm } from "./components"
 import { Row, Col } from 'react-bootstrap';
 import {connect} from 'react-redux';
-import {selectSymbol, updatePage, toggleSymbolAddition} from './actions'
+import {selectSymbol, tmpSaveSymbol, updatePage, toggleSymbolAddition} from './actions'
 
 class Main extends Component {
 
     render() {
         const {
             symbol, symbols, selectSymbol, text_chunk, number_pages, page, updatePage, symbolAddition,
-            toggleSymbolAddition
+            toggleSymbolAddition, tmpSaveSymbol
         } = this.props;
 
         return(
@@ -35,6 +35,8 @@ class Main extends Component {
                             symbols={symbols}
                             toggleSymbolAddition={toggleSymbolAddition}
                             symbolAddition={symbolAddition}
+                            text_chunk={text_chunk}
+                            tmpSaveSymbol={tmpSaveSymbol}
                         />
                     </Col>
                 </Row>
@@ -51,7 +53,7 @@ const mapStateToProps = state => {
         text_chunk: state.editor.text_chunk,
         symbols: state.editor.symbols,
         symbol: state.editor.symbol,
-        symbolAddition: state.editor.symbolAddition
+        symbolAddition: state.editor.symbolAddition,
     }
 }
 
@@ -59,7 +61,8 @@ const mapDispatchToProps = dispatch => {
     return {
         updatePage: (page) => dispatch(updatePage(page)),
         selectSymbol: (symbol) => dispatch(selectSymbol(symbol)),
-        toggleSymbolAddition: () => dispatch(toggleSymbolAddition())
+        tmpSaveSymbol: (context) => dispatch(tmpSaveSymbol(context)),
+        toggleSymbolAddition: () => dispatch(toggleSymbolAddition()),
     };
 }
 

@@ -1,4 +1,3 @@
-
 import C from './constants';
 import { errorMessageToString } from 'utils';
 
@@ -34,10 +33,10 @@ export function selectSymbol(symbol) {
     }
 }
 
-export function toggleSymbolAddition() {
+export function toggleSymbolAddition(context) {
     return (dispatch, getState) => {
         dispatch({
-            type: C.SYMBOL_ADDITION
+            type: C.SYMBOL_ADDITION,
         });
     }
 }
@@ -70,5 +69,49 @@ export function updatePage(page) {
                 dispatch({type: C.UPDATE_PAGE_FAILURE, error: errorMessageToString()})
             }
         })
+    }
+}
+
+export function tmpSaveSymbol(context) {
+    return (dispatch, getState) => {
+        const {page} = getState().editor;
+        const token = $('[name=csrfmiddlewaretoken]').val();
+        console.log(page)
+
+        dispatch({
+            type: C.SYMBOL_SAVE_REQUEST
+        });
+
+        $.ajax({
+            type: 'POST',
+            url: `tmp_save_symbol/`,
+            dataType: 'json',
+            // data: ['context='+context, "csrfmiddlewaretoken="+token, 'page='+page].join('&'),
+            data: {
+                ...context,
+                page: page,
+                csrfmiddlewaretoken: token 
+            },
+            success: (data) => {
+                if (data.status) {
+                    console.log('THIS IS OK')
+                    dispatch({
+                        type: C.SYMBOL_SAVE_SUCCESS,
+                        data: data
+                    });
+                } else {
+                    console.log('somethins wrong...')
+                    dispatch({
+                        type: C.SYMBOL_SAVE_FAILURE
+                    });
+                }
+            },
+            error: () => {
+                console.log('TOTALY HAT')
+                dispatch({
+                    type: C.SYMBOL_SAVE_FAILURE
+                });
+            }
+})
     }
 }
