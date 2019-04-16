@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import Select from 'react-select';
+import Creatable from 'react-select/lib/Creatable';
 
 
 export default class AddSymbolForm extends Component  {
@@ -24,11 +25,13 @@ export default class AddSymbolForm extends Component  {
     }
 
     onChangeSymbol = (e) => {
+        let new_symbol = {value: e.__isNew__ ? 'new' : e.value, label: e.label}
         let prevContext = this.state.context;
         let nextContext = {
             ...prevContext,
-            symbol: e
+            symbol: new_symbol
         }
+
         this.setState({context: nextContext});
     }
 
@@ -110,32 +113,31 @@ export default class AddSymbolForm extends Component  {
 
         return(
             <div>
-
-                    <div className="form-group">
-                        <label htmlFor="symbol">Символ</label>
-                        <Select
-                            id='symbol'
-                            value={this.state.context.symbol}
-                            options={symbols}
-                            onChange={this.onChangeSymbol}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="description">Описание символа</label>
-                        <textarea
-                            style={{fontSize: '14px'}}
-                            value={this.state.context.description}
-                            className="form-control"
-                            rows="5"
-                            name='description'
-                            id="description"
-                            onChange={::this.onChageContext}
-                        />
-                    </div>
-                    <div className="btn-group" role="group">
-                        <button type='submit' onClick={this.onSubmit} style={{marginRight: '10px'}}>Сохранить</button>
-                        <button onClick={this.onToggle}>Отмена</button>
-                    </div>
+                <div className="form-group">
+                    <label htmlFor="symbol">Символ</label>
+                    <Creatable
+                        id='symbol'
+                        value={this.state.context.symbol}
+                        options={symbols}
+                        onChange={this.onChangeSymbol}
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="description">Описание символа</label>
+                    <textarea
+                        style={{fontSize: '14px'}}
+                        value={this.state.context.description}
+                        className="form-control"
+                        rows="5"
+                        name='description'
+                        id="description"
+                        onChange={::this.onChageContext}
+                    />
+                </div>
+                <div className="btn-group" role="group">
+                    <button type='submit' onClick={this.onSubmit} style={{marginRight: '10px'}}>Сохранить</button>
+                    <button onClick={this.onToggle}>Отмена</button>
+                </div>
             </div>
         )
     }

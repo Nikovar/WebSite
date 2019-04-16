@@ -76,25 +76,32 @@ export function tmpSaveSymbol(context) {
     return (dispatch, getState) => {
         const {page} = getState().editor;
         const token = $('[name=csrfmiddlewaretoken]').val();
-        console.log(page)
 
         dispatch({
             type: C.SYMBOL_SAVE_REQUEST
         });
 
+        let data = {
+            symbol_id: context.symbol.value,
+            symbol_title: context.symbol.label,
+            description: context.description,
+            text: context.text,
+            start: context.start,
+            end: context.end,
+            word_len: context.word_len,
+            word_shift: context.word_shift,
+            page: page,
+            csrfmiddlewaretoken: token 
+        }
+
         $.ajax({
             type: 'POST',
             url: `tmp_save_symbol/`,
             dataType: 'json',
-            // data: ['context='+context, "csrfmiddlewaretoken="+token, 'page='+page].join('&'),
-            data: {
-                ...context,
-                page: page,
-                csrfmiddlewaretoken: token 
-            },
+            data: data,
             success: (data) => {
                 if (data.status) {
-                    console.log('THIS IS OK')
+                    alert('Вы успешно добавили символ! (Он будет сохраняться, как только мы реализуем вьюху)');
                     dispatch({
                         type: C.SYMBOL_SAVE_SUCCESS,
                         data: data
@@ -112,6 +119,6 @@ export function tmpSaveSymbol(context) {
                     type: C.SYMBOL_SAVE_FAILURE
                 });
             }
-})
+        })
     }
 }

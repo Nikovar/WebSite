@@ -53,6 +53,7 @@ export default function editor(state=initialState, action) {
                 ...state,
                 ...action.data,
                 isFetching: false,
+                symbolAddition: false,
             }
 
         case C.SYMBOL_SAVE_FAILURE:

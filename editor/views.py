@@ -190,8 +190,22 @@ def _get_book_data(request, book, page=1):
 
 
 def tmp_save_symbol(request, book_id, *args, **kwargs):
-    print('\n\n')
-    print('context', request.POST)  # вот сюда приедет всё, что нужно
+    print('='*100)
+    print('\n\n\n')
+
+    print('symbol_id', request.POST['symbol_id'])  # Если сюда приедет строка 'new', то значит мы создали новый символ
+    print('symbol_title', request.POST['symbol_title'])
+
+    # Текст для создания нового экземпляра SymbolDescription (Нужно, кстати, переделать схему)
+    print('description', request.POST['description'])
+    
+    print('text', request.POST['text'])
+    print('start', request.POST['start'])
+    print('end', request.POST['end'])
+    print('word_len', request.POST['word_len'])
+    print('word_shift', request.POST['word_shift'])
     print('page', request.POST['page'])
+
     print('\n\n')
+    print('='*100)
     return JsonResponse({'status': True}, safe=False)
