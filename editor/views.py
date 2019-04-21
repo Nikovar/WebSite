@@ -45,13 +45,19 @@ def main(request, book_id):
     book = get_object_or_404(Book, id=book_id)
     context = _get_book_data(request, book)
 
-    symbols = book.symbol_set.values_list('id', 'name', 'description__text')
+    symbols = book.symbol_set.values_list('id', 'name', 'descriptions__text')
+
+    tmp_res = defaultdict(lambda: {'name': '', 'descriptions': []})
+    for s in symbols:
+        tmp_res[s[0]]['name'] = s[1]
+        if s[2]:
+            tmp_res[s[0]]['descriptions'].append(s[2])
 
     symbols = [{
-        'value': symbol[0],
-        'label': symbol[1] or '',
-        'description': symbol[2] or ''
-    } for symbol in symbols]
+        'value': symbol_id,
+        'label': symbol_data['name'],
+        'descriptions': symbol_data['descriptions']
+    } for symbol_id, symbol_data in tmp_res.items()]
 
     context['symbols'] = symbols
     return render(request, 'core/editor/main.html', context)
@@ -147,6 +153,7 @@ def _check_crossing(board, addrs, is_left):
 
 def _get_chunk(adrs, text, chunk_size, page, checking):
     left_right = [(page-1) * chunk_size, page * chunk_size]
+    
     assert left_right[0] < len(text)
 
     for i, board in enumerate(left_right):
@@ -190,22 +197,43 @@ def _get_book_data(request, book, page=1):
 
 
 def tmp_save_symbol(request, book_id, *args, **kwargs):
-    print('='*100)
-    print('\n\n\n')
+    """
+    Не нашел временной таблицы для сохранения описаний.
+    Нужно будет реализовать. Или найти)
 
-    print('symbol_id', request.POST['symbol_id'])  # Если сюда приедет строка 'new', то значит мы создали новый символ
-    print('symbol_title', request.POST['symbol_title'])
 
-    # Текст для создания нового экземпляра SymbolDescription (Нужно, кстати, переделать схему)
-    print('description', request.POST['description'])
+
+
+    Ниже следует описание данных, которые приедут с фронта
+
+    request.POST['symbol_id'] - id символа, для которого мы добавляем вхождения.
+    если приехала строка 'new' - это значит, что мы создали новый символ
+    ###########################################################################
+
+    request.POST['symbol_title'] - если в предыдущем параметре приехала 'new', то данное поле
+    мы используем как имя для нового символа. В противном случае - не используем вообще
+    ПримеР: 
+    if request.POST['symbol_id']:
+        symbol = Symbol.objects.create(name=request.POST['symbol_title'])
+    ###########################################################################
+
+    request.POST['description'] - новое описание символа.
+    При создании нового символа сюда обязательно должно что-то приехать.
+     Т.е. создаем новый экземпляр SymbolDescription(symbol=symbol, text=request.POST['description'])
+    ###########################################################################
+
+    Ниже указано как получить адреса нового вхождения.
+    Перед сохранением нужно сделать вот это:
     
-    print('text', request.POST['text'])
-    print('start', request.POST['start'])
-    print('end', request.POST['end'])
-    print('word_len', request.POST['word_len'])
-    print('word_shift', request.POST['word_shift'])
-    print('page', request.POST['page'])
+    offset = (page - 1) * BOOK_CHUNK_SIZE
 
-    print('\n\n')
-    print('='*100)
+    start = request.POST['start'] + offset
+    end = request.POST['end'] + offset
+    word_len = request.POST['word_len'] + offset
+    word_shift = request.POST['word_shift'] + offset
+
+    """
+
+
+    # Ответ оставить пока именно в таком виде. Нам пока нет нужды ещё что-то возвращать.
     return JsonResponse({'status': True}, safe=False)

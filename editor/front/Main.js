@@ -1,3 +1,4 @@
+
 import React, {Component} from 'react';
 import { SymbolNavigation, PageWindow, AddSymbolForm } from "./components"
 import { Row, Col } from 'react-bootstrap';
@@ -9,7 +10,7 @@ class Main extends Component {
     render() {
         const {
             symbol, symbols, selectSymbol, text_chunk, number_pages, page, updatePage, symbolAddition,
-            toggleSymbolAddition, tmpSaveSymbol
+            toggleSymbolAddition, tmpSaveSymbol, existences
         } = this.props;
 
         return(
@@ -28,6 +29,8 @@ class Main extends Component {
                             number_pages={number_pages}
                             page={page}
                             updatePage={updatePage}
+                            existences={existences}
+                            symbol={symbol}
                         />
                     </Col>
                     <Col md={2} lg={2}>
@@ -54,6 +57,7 @@ const mapStateToProps = state => {
         symbols: state.editor.symbols,
         symbol: state.editor.symbol,
         symbolAddition: state.editor.symbolAddition,
+        existences: state.editor.existences,
     }
 }
 

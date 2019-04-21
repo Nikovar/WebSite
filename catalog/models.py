@@ -77,22 +77,20 @@ class Book(models.Model):
         return self.title
 
 
-class SymbolDescription(models.Model):
-    text = models.TextField(max_length=SYMBOL_DESCRIPTION_LEN)
-
-    def __str__(self):
-        return self.text if len(self.text) <= 20 else '{}...'.format(self.text[:17])
-
-
 class Symbol(models.Model):
-    occurs_in = models.ManyToManyField(Book,
-                                       through='Existence',
-                                       through_fields=('symbol', 'book'))
-    description = models.ForeignKey(SymbolDescription, on_delete=models.SET_NULL, related_name='symbols', null=True)
+    occurs_in = models.ManyToManyField(Book, through='Existence', through_fields=('symbol', 'book'))
     name = models.CharField(max_length=SYMBOL_NAME_LEN)
 
     def __str__(self):
         return self.name
+
+
+class SymbolDescription(models.Model):
+    text = models.TextField(max_length=SYMBOL_DESCRIPTION_LEN)
+    symbol = models.ForeignKey(Symbol, on_delete=models.CASCADE, related_name='descriptions')
+
+    def __str__(self):
+        return self.text if len(self.text) <= 20 else '{}...'.format(self.text[:17])
 
 
 # this one only for the correct listing of symbol occurrences, which owner has left @gronix

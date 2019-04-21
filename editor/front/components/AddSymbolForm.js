@@ -14,7 +14,7 @@ export default class AddSymbolForm extends Component  {
 
     getInitialContext = () => {
         return {
-            symbol: {},
+            symbol: {descriptions: []},
             start: 0,
             word_shift: 0,
             word_len: 0,
@@ -25,7 +25,11 @@ export default class AddSymbolForm extends Component  {
     }
 
     onChangeSymbol = (e) => {
-        let new_symbol = {value: e.__isNew__ ? 'new' : e.value, label: e.label}
+        let new_symbol = {
+            value: e.__isNew__ ? 'new' : e.value, 
+            label: e.label, 
+            descriptions: e.__isNew__ ? [] : e.descriptions
+        }
         let prevContext = this.state.context;
         let nextContext = {
             ...prevContext,
@@ -63,6 +67,7 @@ export default class AddSymbolForm extends Component  {
                 break
             }
         }
+        word_shift = word_shift - start;
         return {start, word_shift, word_len, end}
     }
     
@@ -94,18 +99,27 @@ export default class AddSymbolForm extends Component  {
                 return
             }
         } else {
-            this.setState({context: this.getInitialContext})
+            this.setState({context: this.getInitialContext()})
         }
         toggleSymbolAddition();
     }
 
     onSubmit = (e) => {
         e.preventDefault();
-        this.props.tmpSaveSymbol(this.state.context);
+        let {symbol, description} = this.state.context;
+        if (!symbol.value) {
+            alert('Выберите или добавьте новый символ!');
+        } else if (symbol.value == 'new' && !description) {
+            alert('При добавлении нового символа нужно обязательно указать его описание!');
+        } else {
+            this.setState({context: this.getInitialContext()});
+            this.props.tmpSaveSymbol(this.state.context);
+        }
     }
 
     render() {
         const {symbolAddition, symbols} = this.props;
+        const {symbol} = this.state.context;
 
         if (!symbolAddition) {
             return <button onClick={this.onToggle}>Добавить символ</button>
@@ -117,13 +131,29 @@ export default class AddSymbolForm extends Component  {
                     <label htmlFor="symbol">Символ</label>
                     <Creatable
                         id='symbol'
-                        value={this.state.context.symbol}
+                        value={symbol}
                         options={symbols}
                         onChange={this.onChangeSymbol}
                     />
                 </div>
+                {
+                    symbol.descriptions.length > 0
+                    ?
+                    <div>
+                        <label htmlFor='symbol-descriptions'>Значения символа</label>
+                        <div id='symbol-descriptions'>
+                        {
+                            symbol.descriptions.map((d, i) => {
+                                return <div key={i} title={d}>{i+1}) {d.slice(0, 50)}{d.length > 50 ? '...' : ''}</div>
+                            })
+                        }
+                        </div>
+                    </div>
+                    :
+                    null
+                }
                 <div className="form-group">
-                    <label htmlFor="description">Описание символа</label>
+                    <label htmlFor="description">Новое значение символа</label>
                     <textarea
                         style={{fontSize: '14px'}}
                         value={this.state.context.description}

@@ -11,14 +11,9 @@ export function init(book_id, page, number_pages, symbols, existences, text_chun
             number_pages,
             symbols,
             existences,
-            text_chunk
+            text_chunk,
+            symbol: symbols.length ? symbols[0] : null
         }
-    }
-}
-
-export function get_contexts() {
-    return (dispatch, getState) => {
-        console.log('IN GET_CONTEXTS!!!!')
     }
 }
 
@@ -85,7 +80,6 @@ export function tmpSaveSymbol(context) {
             symbol_id: context.symbol.value,
             symbol_title: context.symbol.label,
             description: context.description,
-            text: context.text,
             start: context.start,
             end: context.end,
             word_len: context.word_len,

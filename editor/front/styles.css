@@ -123,3 +123,17 @@
   border-top-right-radius: 3px;
   border-bottom-right-radius: 3px;
 } 
+
+#symbol-descriptions {
+  width: 100%;
+  background-color: #fff;
+}
+
+#symbol-descriptions div {
+  color: #000;
+  border: 1px solid #000;
+  font-size: 12px;
+  line-height: 1.1;
+  padding: 5px;
+  cursor: pointer;
+}
