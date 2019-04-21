@@ -213,8 +213,10 @@ def tmp_save_symbol(request, book_id, *args, **kwargs):
     request.POST['symbol_title'] - если в предыдущем параметре приехала 'new', то данное поле
     мы используем как имя для нового символа. В противном случае - не используем вообще
     ПримеР: 
-    if request.POST['symbol_id']:
+    if request.POST['symbol_id'] == 'new':
         symbol = Symbol.objects.create(name=request.POST['symbol_title'])
+    else:
+        symbol = Symbol.objects.get(pk=request.POST['symbol_id'])
     ###########################################################################
 
     request.POST['description'] - новое описание символа.
