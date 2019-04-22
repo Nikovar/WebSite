@@ -11,14 +11,17 @@ class PageWindow extends Component {
         // Он реализован, наивно полагая, что у нас не будет пересекающихся вхождений.
         // Разумеется, они будут, и нужно подумать как именно их отображать.
 
-        let {text_chunk, existences, symbol} = this.props;
+        let { text_chunk, existences, symbol, start_position } = this.props;
         let exs_to_highlight = existences && symbol && existences[symbol.value];
         let new_chunk = '';
 
         if (exs_to_highlight) {
+            console.log(exs_to_highlight)
+            console.log(start_position)
+
             let sort_existences = exs_to_highlight.map((exs) => {
-                let start = exs[0] + exs[1];
-                let end = start + exs[2];
+                let start = (exs[0] + exs[1]) - start_position;
+                let end = (start + exs[2]);
                 return [start, end];
             }).sort((a,b) => a[0] > b[0]);
 

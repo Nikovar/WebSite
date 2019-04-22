@@ -79,6 +79,7 @@ def get_page(request, book_id, page):
 
     try:
         context = _get_book_data(request, book, page)
+        print(context['existences'])
     except AssertionError:
         return HttpResponse('""', content_type='application/json')
 
@@ -165,10 +166,12 @@ def _get_chunk(adrs, text, chunk_size, page, checking):
 
     if checking:
         adrs = adrs.filter(start__gte=left, end_shift__lte=right - F('start'))
-    return text[left: right], adrs
+
+    return text[left: right], adrs, left
 
 
 def _get_book_data(request, book, page=1):
+
     text = get_text(book.file)
     adrs, checking = {}, False
 
@@ -178,7 +181,7 @@ def _get_book_data(request, book, page=1):
         checking = True
         adrs = reduce(lambda x, y: x | y, [existence.locations.all() for existence in all_book_existences])
 
-    text_chunk, adrs = _get_chunk(adrs, text, BOOK_CHUNK_SIZE, page, checking)
+    text_chunk, adrs, start_position = _get_chunk(adrs, text, BOOK_CHUNK_SIZE, page, checking)
 
     if checking:
         qs = adrs.order_by('start').values_list('existence__symbol', 'start', 'word_shift', 'word_len', 'end_shift')
@@ -192,7 +195,8 @@ def _get_book_data(request, book, page=1):
         'text_chunk': text_chunk.replace('\n', ' '), 
         'page': page, 
         'number_pages': math.ceil(len(text) / BOOK_CHUNK_SIZE),
-        'book_id': book.pk
+        'book_id': book.pk,
+        'start_position': start_position
     }
 
 
@@ -225,17 +229,14 @@ def tmp_save_symbol(request, book_id, *args, **kwargs):
     ###########################################################################
 
     Ниже указано как получить адреса нового вхождения.
-    Перед сохранением нужно сделать вот это:
-    
-    offset = (page - 1) * BOOK_CHUNK_SIZE
+    (Приедет уже всё в готовом виде)
 
-    start = request.POST['start'] + offset
-    end = request.POST['end'] + offset
-    word_len = request.POST['word_len'] + offset
-    word_shift = request.POST['word_shift'] + offset
+    start = request.POST['start']
+    end = request.POST['end']
+    word_len = request.POST['word_len']
+    word_shift = request.POST['word_shift']
 
     """
-
 
     # Ответ оставить пока именно в таком виде. Нам пока нет нужды ещё что-то возвращать.
     return JsonResponse({'status': True}, safe=False)

@@ -10,7 +10,7 @@ class Main extends Component {
     render() {
         const {
             symbol, symbols, selectSymbol, text_chunk, number_pages, page, updatePage, symbolAddition,
-            toggleSymbolAddition, tmpSaveSymbol, existences
+            toggleSymbolAddition, tmpSaveSymbol, existences, start_position
         } = this.props;
 
         return(
@@ -31,6 +31,7 @@ class Main extends Component {
                             updatePage={updatePage}
                             existences={existences}
                             symbol={symbol}
+                            start_position={start_position}
                         />
                     </Col>
                     <Col md={2} lg={2}>
@@ -40,6 +41,7 @@ class Main extends Component {
                             symbolAddition={symbolAddition}
                             text_chunk={text_chunk}
                             tmpSaveSymbol={tmpSaveSymbol}
+                            start_position={start_position}
                         />
                     </Col>
                 </Row>
@@ -58,6 +60,7 @@ const mapStateToProps = state => {
         symbol: state.editor.symbol,
         symbolAddition: state.editor.symbolAddition,
         existences: state.editor.existences,
+        start_position: state.editor.start_position
     }
 }
 

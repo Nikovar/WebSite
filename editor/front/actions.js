@@ -2,10 +2,11 @@ import C from './constants';
 import { errorMessageToString } from 'utils';
 
 
-export function init(book_id, page, number_pages, symbols, existences, text_chunk) {
+export function init(start_position, book_id, page, number_pages, symbols, existences, text_chunk) {
     return {
         type: C.MENU_INIT,
         data: {
+            start_position,
             book_id, 
             page, 
             number_pages,
@@ -53,7 +54,9 @@ export function updatePage(page) {
                         type: C.UPDATE_PAGE_SUCCESS,
                         data: {
                             page: page,
-                            text_chunk: data.data.text_chunk
+                            text_chunk: data.data.text_chunk,
+                            existences: data.data.existences,
+                            start_position: data.data.start_position
                         }
                     })
                 } else {

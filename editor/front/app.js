@@ -14,8 +14,8 @@ import {init} from './actions';
 let store = createStore(EditorApp, applyMiddleware(thunk));
 
 
-function editorRender(book_id, page, number_pages, symbols, existences, text_chunk='') {
-    store.dispatch(init(book_id, page, number_pages, symbols, existences, text_chunk));
+function editorRender(start_position, book_id, page, number_pages, symbols, existences, text_chunk='') {
+    store.dispatch(init(start_position, book_id, page, number_pages, symbols, existences, text_chunk));
 
     render(
         <Provider store={store}>

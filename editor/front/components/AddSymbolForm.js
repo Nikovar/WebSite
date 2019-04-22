@@ -68,6 +68,7 @@ export default class AddSymbolForm extends Component  {
             }
         }
         word_shift = word_shift - start;
+        start = start + this.props.start_position;
         return {start, word_shift, word_len, end}
     }
     

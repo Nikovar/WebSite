@@ -3,6 +3,7 @@ import C from '../constants';
 
 const initialState = {
     book_id: null,
+    start_position: 0,
     page: 1,
     number_pages: null,
     symbols: [],
