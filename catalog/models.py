@@ -1,6 +1,5 @@
 from django.utils.timezone import now as current_time
 from django.contrib.auth import get_user_model
-# from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse  # To generate URLS by reversing URL patterns... @gronix: let this existing for now
 from django.core.files.storage import FileSystemStorage
@@ -95,7 +94,11 @@ class SymbolDescription(models.Model):
 
 # this one only for the correct listing of symbol occurrences, which owner has left @gronix
 def get_sentinel_user():
-    return get_user_model().objects.get_or_create(username='deleted')[0]
+    return get_user_model().objects.get_or_create(username='deleted')[0].id
+
+
+def get_empty_user():
+    return get_user_model().objects.get_or_create(username='empty')[0].id
 
 
 # Standard Django's implementation for many-to-many relation with extra fields @gronix
@@ -106,14 +109,12 @@ class Existence(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE,
                              related_name='existence_set',
                              related_query_name='ex_set')
-    inserter = models.ForeignKey(get_user_model(), on_delete=models.SET(get_sentinel_user),
-                                 related_name='inserted',
-                                 related_query_name='insert')
-    date_joined = models.DateTimeField(default=current_time)
+
+    class Meta:
+        unique_together = ('symbol', 'book')
 
     def __str__(self):
-        time = self.date_joined.isoformat(sep='/', timespec='seconds')
-        return '"{}" -> "{}" (by {} at {})'.format(self.symbol, self.book, self.inserter, time)
+        return '"{}" -> "{}"'.format(self.symbol, self.book)
 
 
 # DISCLAIMER: All that is written below is subject to discussion. ;). @gronix
@@ -125,6 +126,12 @@ class Location(models.Model):
     word_shift = models.PositiveSmallIntegerField(help_text="Shift to Symbol existence from entry start address")
     word_len = models.PositiveSmallIntegerField(help_text="Length of Symbol (or his synonym) inside context")
     end_shift = models.PositiveSmallIntegerField(help_text="Shift to end of entry from start address")
+
+    inserter = models.ForeignKey(get_user_model(), on_delete=models.SET(get_sentinel_user),
+                                 related_name='inserted',
+                                 related_query_name='insert',
+                                 default=get_empty_user)
+    date_joined = models.DateTimeField(default=current_time)
 
     # @gronix:
     #   Django has stupid logics for model validation - framework docs suggests using
@@ -148,12 +155,10 @@ class Location(models.Model):
             super().save(*args, **kwargs)
 
     def __str__(self):
+        time = self.date_joined.isoformat(sep='/', timespec='seconds')
         sword_pos = self.start + self.word_shift
         eword_pos = sword_pos + self.word_len
         end = self.start + self.end_shift
-        return '{} ({} - [{}..{}] - {}): {}'.format(self.existence.book.title,
-                                                    self.start,
-                                                    sword_pos,
-                                                    eword_pos,
-                                                    end,
-                                                    self.existence.symbol.name)
+        return '{} ({}-[{}..{}]-{}): {} (by {} at {})'.format(
+                   self.existence.book.title, self.start, sword_pos, eword_pos, end,
+                   self.existence.symbol.name, self.inserter_id, time)
