@@ -9,7 +9,7 @@ from django.db.models.query import prefetch_related_objects
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseNotFound
 from django.shortcuts import render, redirect, get_object_or_404
 
-from catalog.models import Author, Book, Location, Symbol
+from catalog.models import Author, Book, Location, Symbol, Existence
 from catalog.utils import get_text
 from core.forms import BookChoosing
 from .settings import error_messages, BOOK_CHUNK_SIZE
@@ -201,42 +201,51 @@ def _get_book_data(request, book, page=1):
 
 
 def tmp_save_symbol(request, book_id, *args, **kwargs):
-    """
-    Не нашел временной таблицы для сохранения описаний.
-    Нужно будет реализовать. Или найти)
+    book = Book.objects.get(pk=book_id)
+    author = book.author
 
+    tmp_author, _ = Author.objects.using('temp').get_or_create(
+        pk=author.pk,
+        first_name=author.first_name,
+        last_name=author.last_name
+    )
 
+    tmp_book, _ = Book.objects.using('temp').get_or_create(
+        pk=book.pk,
+        author=tmp_author
+    )
+    
+    symbol_id = request.POST['symbol_id']
+    symbol_title = request.POST['symbol_title'].strip().lower()
 
-
-    Ниже следует описание данных, которые приедут с фронта
-
-    request.POST['symbol_id'] - id символа, для которого мы добавляем вхождения.
-    если приехала строка 'new' - это значит, что мы создали новый символ
-    ###########################################################################
-
-    request.POST['symbol_title'] - если в предыдущем параметре приехала 'new', то данное поле
-    мы используем как имя для нового символа. В противном случае - не используем вообще
-    ПримеР: 
-    if request.POST['symbol_id'] == 'new':
-        symbol = Symbol.objects.create(name=request.POST['symbol_title'])
+    if symbol_id == 'new':
+        tmp_symbol = Symbol.objects.using('temp').create(name=symbol_title)
     else:
-        symbol = Symbol.objects.get(pk=request.POST['symbol_id'])
-    ###########################################################################
+        symbol = Symbol.objects.get(pk=symbol_id)
+        tmp_symbol, _ = Symbol.objects.using('temp').get_or_create(name=symbol.name)
 
-    request.POST['description'] - новое описание символа.
-    При создании нового символа сюда обязательно должно что-то приехать.
-     Т.е. создаем новый экземпляр SymbolDescription(symbol=symbol, text=request.POST['description'])
-    ###########################################################################
+    description = request.POST['description'].strip()
+    if description:
+        SymbolDescription.objects.using('temp').create(symbol=tmp_symbol, text=description)
 
-    Ниже указано как получить адреса нового вхождения.
-    (Приедет уже всё в готовом виде)
+    tmp_existence, _ = Existence.objects.using('temp').get_or_create(symbol=tmp_symbol, book=tmp_book)
 
-    start = request.POST['start']
-    end = request.POST['end']
-    word_len = request.POST['word_len']
-    word_shift = request.POST['word_shift']
+    print(request.POST['start'])
+    print(request.POST['word_shift'])
+    print(request.POST['word_len'],)
+    print(request.POST['end'])
 
-    """
+    tmp_location = Location.objects.using('temp').create(
+        existence=tmp_existence,
+        start=request.POST['start'],
+        end_shift=request.POST['end'],
+        word_len=request.POST['word_len'],
+        word_shift=request.POST['word_shift'],
+        # Нужно определиться, будем ли мы обязывать пользователя регистрироваться.
+        # В случае, если пользователь не залогинился, то в request.user нам приедет AnonymousUser
+        # тогда inserter не заполняем. Пусть подтянется значение по умолчанию.
+        # inserter=request.user
+    )
 
     # Ответ оставить пока именно в таком виде. Нам пока нет нужды ещё что-то возвращать.
     return JsonResponse({'status': True}, safe=False)
