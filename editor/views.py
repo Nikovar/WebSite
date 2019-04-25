@@ -8,8 +8,9 @@ from django.db.models import F, Sum, IntegerField
 from django.db.models.query import prefetch_related_objects
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseNotFound
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import get_user_model
 
-from catalog.models import Author, Book, Location, Symbol, Existence
+from catalog.models import Author, Book, Location, Symbol, Existence, SymbolDescription
 from catalog.utils import get_text
 from core.forms import BookChoosing
 from .settings import error_messages, BOOK_CHUNK_SIZE
@@ -230,21 +231,19 @@ def tmp_save_symbol(request, book_id, *args, **kwargs):
 
     tmp_existence, _ = Existence.objects.using('temp').get_or_create(symbol=tmp_symbol, book=tmp_book)
 
-    print(request.POST['start'])
-    print(request.POST['word_shift'])
-    print(request.POST['word_len'],)
-    print(request.POST['end'])
+    if request.user.pk is not None:
+        tmp_inserter, _ = get_user_model().objects.using('temp').get_or_create(username=request.user.username)
+    else:
+        # на случай, если у нас размечает не авторизованный пользователь
+        tmp_inserter, _ = get_user_model().objects.using('temp').get_or_create(username='temp_user')
 
-    tmp_location = Location.objects.using('temp').create(
+    Location.objects.using('temp').create(
         existence=tmp_existence,
         start=request.POST['start'],
         end_shift=request.POST['end'],
         word_len=request.POST['word_len'],
         word_shift=request.POST['word_shift'],
-        # Нужно определиться, будем ли мы обязывать пользователя регистрироваться.
-        # В случае, если пользователь не залогинился, то в request.user нам приедет AnonymousUser
-        # тогда inserter не заполняем. Пусть подтянется значение по умолчанию.
-        # inserter=request.user
+        inserter=tmp_inserter
     )
 
     # Ответ оставить пока именно в таком виде. Нам пока нет нужды ещё что-то возвращать.
