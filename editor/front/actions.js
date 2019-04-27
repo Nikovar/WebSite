@@ -98,7 +98,7 @@ export function tmpSaveSymbol(context) {
             data: data,
             success: (data) => {
                 if (data.status) {
-                    alert('Вы успешно добавили символ! (Он будет сохраняться, как только мы реализуем вьюху)');
+                    alert('Вы успешно добавили символ!');
                     dispatch({
                         type: C.SYMBOL_SAVE_SUCCESS,
                         data: data
