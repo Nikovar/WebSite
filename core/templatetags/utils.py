@@ -6,5 +6,8 @@ def get_item(dictionary, key):
     try:
         return dictionary.get(key)
     except Exception:
-        return dictionary[key]
+        try:
+            return dictionary[key]
+        except TypeError:
+            return getattr(dictionary, key)
 

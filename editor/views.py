@@ -1,19 +1,20 @@
-import math
 from collections import defaultdict
 from functools import reduce
 from json import dumps
+from math import ceil
 
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import F, Sum, IntegerField
-from django.db.models.query import prefetch_related_objects
-from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseNotFound
-from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model
+from django.db.models import F, IntegerField, Sum
+from django.db.models.query import prefetch_related_objects
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
 
-from catalog.models import Author, Book, Location, Symbol, Existence, SymbolDescription
+from catalog.models import Author, Book, Existence, Location, Symbol, SymbolDescription
 from catalog.utils import get_text
 from core.forms import BookChoosing
-from .settings import error_messages, BOOK_CHUNK_SIZE
+
+from .settings import BOOK_CHUNK_SIZE, error_messages
 
 
 def select(request, method):
@@ -65,7 +66,6 @@ def main(request, book_id):
 
 
 def get_page(request, book_id, page):
-
     if book_id is None or page is None:
         return HttpResponseBadRequest("You should pass identifier of certain book with required page in it.")
 
@@ -87,16 +87,7 @@ def get_page(request, book_id, page):
     return JsonResponse({'status': True, 'data': context}, safe=False)
 
 
-# Commented this because of all related symbols we already pass in "main" view. So i don't know if this needed.
-# def symbols(request):
-#     qs = Symbol.objects.annotate(descr=F('description__text')).values_list('id', 'name', 'descr')
-#     all_symbols = {tup[0]: tup[1:] for tup in qs}
-#     return HttpResponse(dumps({'symbols': all_symbols}), content_type='application/json')
-
-
 def symbols(request):
-    # TODO: realize api functionality here
-
     # "Поправил" вьюху для теста. В value нужно будет сувать id символа
     # в label - его название
 
@@ -195,7 +186,7 @@ def _get_book_data(request, book, page=1):
         'existences': dict(adrs),  # чтобы корректно пробрасывать из шаблона в react.
         'text_chunk': text_chunk.replace('\n', ' '), 
         'page': page, 
-        'number_pages': math.ceil(len(text) / BOOK_CHUNK_SIZE),
+        'number_pages': ceil(len(text) / BOOK_CHUNK_SIZE),
         'book_id': book.pk,
         'start_position': start_position
     }
@@ -208,12 +199,13 @@ def tmp_save_symbol(request, book_id, *args, **kwargs):
     tmp_author, _ = Author.objects.using('temp').get_or_create(
         pk=author.pk,
         first_name=author.first_name,
-        last_name=author.last_name
+        last_name=author.last_name,
     )
 
     tmp_book, _ = Book.objects.using('temp').get_or_create(
         pk=book.pk,
-        author=tmp_author
+        title=book.title,
+        author=tmp_author,
     )
     
     symbol_id = request.POST['symbol_id']

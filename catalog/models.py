@@ -155,10 +155,11 @@ class Location(models.Model):
             super().save(*args, **kwargs)
 
     def __str__(self):
-        time = self.date_joined.isoformat(sep='/', timespec='seconds')
+        time = self.date_joined.replace(tzinfo=None).isoformat(sep='/', timespec='seconds')
         sword_pos = self.start + self.word_shift
         eword_pos = sword_pos + self.word_len
         end = self.start + self.end_shift
-        return '{} ({}-[{}..{}]-{}): {} (by {} at {})'.format(
-                   self.existence.book.title, self.start, sword_pos, eword_pos, end,
-                   self.existence.symbol.name, self.inserter_id, time)
+        inserter = get_user_model().objects.using(self._state.db).get(id=self.inserter_id)
+        return '"{}" ({}-[{}..{}]-{}) in "{}" (by {} at {})'.format(
+                   self.existence.symbol.name, self.start, sword_pos, eword_pos, end,
+                   self.existence.book.title, inserter, time)
