@@ -63,7 +63,7 @@ export function updatePage(page) {
                     dispatch({type: C.UPDATE_PAGE_FAILURE, error: errorMessageToString(data.errors)})
                 }
             },
-            error: () => {0
+            error: () => {
                 dispatch({type: C.UPDATE_PAGE_FAILURE, error: errorMessageToString()})
             }
         })
