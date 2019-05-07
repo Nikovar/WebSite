@@ -86,6 +86,7 @@ pre {
     word-wrap: break-word;
 }
 
+/*noinspection ALL*/
 blockquote, q { quotes: &#8220 &#8220; }
 
 blockquote:before, blockquote:after,

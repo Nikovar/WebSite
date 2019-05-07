@@ -1,0 +1,47 @@
+{% extends "admin/base_site.html" %}
+
+{% block extrastyle %}
+    {{ block.super }}
+<style type="text/css">
+    ul.changes-info {
+        margin: 0;
+        padding-left: 10px;
+    }
+    ul.changes-info li {
+        list-style-type: none;
+        line-height: 14px;
+        text-align: center;
+    }
+    div.info-container {
+        height: 40px;
+        display: block;
+        margin-bottom: 7px;
+        border-bottom: 1px solid grey;
+    }
+    a.see-changes {
+        display: inline-block;
+        margin: 8px 0 0 30px;
+    }
+</style>
+{% endblock %}
+
+{% block pretitle %}
+    <p style="width: 150px; float: left; margin: 0; color:red; text-align: center;">Неподтверждённые данные:</p>
+	<div class="info-container">
+{#  TODO: pass new context variable ~ `temp_models` == dict, that contain pairs of model_name and count of new entries #}
+        {% if changes_counts|length > 0 %}
+            {% for model, count in changes_counts.items %}
+                <div style="float:left; margin-top: 2px;">
+                    <ul class="changes-info">
+                        <li>{{ model }}</li>
+                        <li>{{ count }}</li>
+                    </ul>
+                </div>
+            {% endfor %}
+            {% if add_watch_link %}
+                <a href="{% url 'admin:see_changes' %}" class="see-changes">Посмотреть</a>
+            {% endif %}
+        {% endif %}
+	</div>
+	{{ block.super }}
+{% endblock %}
