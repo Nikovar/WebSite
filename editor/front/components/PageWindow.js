@@ -16,8 +16,6 @@ class PageWindow extends Component {
         let new_chunk = '';
 
         if (exs_to_highlight) {
-            console.log(exs_to_highlight)
-            console.log(start_position)
 
             let sort_existences = exs_to_highlight.map((exs) => {
                 let start = (exs[0] + exs[1]) - start_position;

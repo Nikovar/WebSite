@@ -48,25 +48,34 @@ export default class AddSymbolForm extends Component  {
         this.setState({context: nextContext})
     }
 
-    getLocation = (sel) => {
+    getLocation = (selected_text) => {
         const { text_chunk } = this.props;
-        let word_shift = sel.anchorOffset;
-        let word_len = sel.focusOffset - sel.anchorOffset;
+        let word_shift = text_chunk.indexOf(selected_text);
+        let word_len = selected_text.length;
+
         let start = 0;
         let end = text_chunk.length;
+        let end_characters = ['.', '?', '!'];
 
         for (let i = word_shift; i > 0; i--) {
-            if (text_chunk[i] == '.') {
+            if (end_characters.includes(text_chunk[i])) {
                 start = i;
                 break;
             }
         }
-        for (let i = sel.focusOffset; i < text_chunk.length; i++) {
-            if (text_chunk[i] == '.') {
-                end = i;
-                break
+
+        // мы должны "захватывать" символ окончания предложения.
+        // ниже мы обрабатываем ситуацию, когда предложение оканчивается, например, на ???
+        let last_symbol = '';
+        for (let i = word_shift + word_len; i < text_chunk.length; i++) {
+            if (end_characters.includes(text_chunk[i])) {
+                last_symbol = text_chunk;
+            } else if (last_symbol) {
+                end = i - 1;
+                break;
             }
         }
+
         word_shift = word_shift - start;
         start = start + this.props.start_position;
         return {start, word_shift, word_len, end}
@@ -78,14 +87,14 @@ export default class AddSymbolForm extends Component  {
 
         if (!symbolAddition) {
             let sel = window.getSelection();
-            let text = sel.toString()
+            let selected_text = sel.toString()
             
-            if (text && sel.anchorNode && sel.anchorNode.parentElement.id == 'page-window'){
-                let { start, word_shift, word_len, end } = this.getLocation(sel);
+            if (selected_text && sel.anchorNode && sel.anchorNode.parentElement.id == 'page-window'){
+                let { start, word_shift, word_len, end } = this.getLocation(selected_text);
                                 
                 let new_context = {
                     ...this.state.context,
-                    text: text,
+                    text: selected_text,
                     start: start,
                     word_shift: word_shift,
                     word_len: word_len,

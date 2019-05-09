@@ -212,7 +212,7 @@ def tmp_save_symbol(request, book_id, *args, **kwargs):
     symbol_title = request.POST['symbol_title'].strip().lower()
 
     if symbol_id == 'new':
-        tmp_symbol = Symbol.objects.using('temp').create(name=symbol_title)
+        tmp_symbol = Symbol.objects.using('temp').get_or_create(name=symbol_title)
     else:
         symbol = Symbol.objects.get(pk=symbol_id)
         tmp_symbol, _ = Symbol.objects.using('temp').get_or_create(name=symbol.name)
