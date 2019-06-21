@@ -30,12 +30,8 @@ def generate_existence(symbol, book):
         staff_user = get_user_model().objects.get_or_create(username='Generator')[0]
         new_ex = Existence.objects.create(symbol=symbol, book=book, inserter=staff_user)
 
-        locations = _get_locations(symbol.name, text)
-        for loc in locations:
-            loc[0] = new_ex
-
-        attrs, signature = {}, [field.name for field in Location._meta.get_fields()[1:]]
-        Location.objects.bulk_create([Location(**_pack_params(loc, signature, attrs)) for loc in locations])
+        locations, container = _get_locations(symbol.name, text), {}
+        Location.objects.bulk_create([Location(**_pack_location_params(loc, new_ex, container)) for loc in locations])
         new_locations_added = len(locations)
     return new_locations_added
 
@@ -74,7 +70,7 @@ def _get_locations(symbol_name, text):
             continue
         start = sentence.start(2)
         end_shift = sentence.end(2) - start
-        sent_locations = [[-1, start, ex[0], ex[1] - ex[0], end_shift] for ex in existences]
+        sent_locations = [(start, ex[0], ex[1] - ex[0], end_shift) for ex in existences]
         locations += sent_locations
     return locations
 
@@ -83,7 +79,10 @@ def _locator(p, sentence):
     return [x.span() for x in finditer(p, sentence, overlapped=True)]
 
 
-def _pack_params(params, signature, container):
-    for attr, param in zip(signature, params):
-        container[attr] = param
-    return container
+def _pack_location_params(location, existence, params):
+    params['checked'] = True
+    params['existence'] = existence
+    for loc_value, p_name in zip(location, ('start', 'word_shift', 'word_len', 'end_shift')):
+        params[p_name] = loc_value
+
+    return params

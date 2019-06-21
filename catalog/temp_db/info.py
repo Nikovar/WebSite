@@ -13,7 +13,7 @@ TRACKED_MODELS = (
     model_binds(Author._meta.object_name, Author, author_render_data, author_saver),
     model_binds(Book._meta.object_name, Book, book_render_data, book_saver),
     model_binds(Symbol._meta.object_name, Symbol, symbol_render_data, symbol_saver),
-    model_binds(SymbolDescription._meta.object_name, SymbolDescription, symbol_descr_render_data, symbol_descr_saver),
+    # model_binds(SymbolDescription._meta.object_name, SymbolDescription, symbol_descr_render_data, symbol_descr_saver),
     model_binds(Location._meta.object_name, Location, location_render_data, location_saver)
 )
 
