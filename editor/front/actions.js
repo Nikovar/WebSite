@@ -29,6 +29,17 @@ export function selectSymbol(symbol) {
     }
 }
 
+export function selectTextCoordinates(selected_text_coordinates) {
+    return (dispatch, getState) => {
+        dispatch({
+            type: C.SELECT_TEXT_COORDINATES,
+            data: {
+                selected_text_coordinates: selected_text_coordinates
+            }
+        });
+    }
+}
+
 export function toggleSymbolAddition(context) {
     return (dispatch, getState) => {
         dispatch({
@@ -70,26 +81,16 @@ export function updatePage(page) {
     }
 }
 
-export function tmpSaveSymbol(context) {
+export function tmpSaveSymbol(data) {
     return (dispatch, getState) => {
-        const {page} = getState().editor;
-        const token = $('[name=csrfmiddlewaretoken]').val();
-
         dispatch({
             type: C.SYMBOL_SAVE_REQUEST
         });
 
-        let data = {
-            symbol_id: context.symbol.value,
-            symbol_title: context.symbol.label,
-            description: context.description,
-            start: context.start,
-            end: context.end,
-            word_len: context.word_len,
-            word_shift: context.word_shift,
-            page: page,
-            csrfmiddlewaretoken: token 
-        }
+        data.csrfmiddlewaretoken = $('[name=csrfmiddlewaretoken]').val();
+        data.page = getState().editor.page;
+
+        console.log(data)
 
         $.ajax({
             type: 'POST',

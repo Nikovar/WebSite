@@ -137,3 +137,20 @@
   padding: 5px;
   cursor: pointer;
 }
+
+#add-information-form,
+#add-context-form {
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+#cancel-adding-context,
+#add-context {
+  background-color: red;
+  color: #000;
+}
+
+#btns-save {
+  margin-top: 20px;
+}

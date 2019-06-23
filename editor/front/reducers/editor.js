@@ -10,6 +10,7 @@ const initialState = {
     symbol: null,
     existences: {},
     text_chunk: '',
+    selected_text_coordinates: {},
     error: '',
     isFetching: false,
     symbolAddition: false,
@@ -32,6 +33,8 @@ export default function editor(state=initialState, action) {
                 ...state,
                 ...action.data,
                 isFetching: false,
+                selected_text_coordinates: {},
+                symbolAddition: false
             }
 
         case C.UPDATE_PAGE_FAILURE: 
@@ -55,13 +58,15 @@ export default function editor(state=initialState, action) {
                 ...action.data,
                 isFetching: false,
                 symbolAddition: false,
+                selected_text_coordinates: {}
             }
 
         case C.SYMBOL_SAVE_FAILURE:
             return {
                 ...state,
                 error: action.error,
-                isFetching: false
+                isFetching: false,
+                selected_text_coordinates: {}
             }
 
         case C.MENU_INIT: 
@@ -71,6 +76,12 @@ export default function editor(state=initialState, action) {
             }
 
         case C.SELECT_SYMBOL:
+            return {
+                ...state,
+                ...action.data
+            }
+
+        case C.SELECT_TEXT_COORDINATES:
             return {
                 ...state,
                 ...action.data

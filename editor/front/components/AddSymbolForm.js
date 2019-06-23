@@ -1,26 +1,46 @@
 import React, {Component} from 'react';
 import Select from 'react-select';
 import Creatable from 'react-select/lib/Creatable';
+import {SQUARE_BRACKET} from '../utils';
 
+const tmp_contexts = [
+    { value: 1, label: '1_context'},
+    { value: 2, label: '2_context'},
+    { value: 3, label: '3_context'},
+    { value: 4, label: '4_context'},
+    { value: 5, label: '5_context'},
+    { value: 6, label: '6_context'},
+    { value: 7, label: '7_context'},
+    { value: 8, label: '8_context'},
+];
+
+const tmp_context_types = [
+    { value: 1, label: '1_type'},
+    { value: 2, label: '2_type'},
+    { value: 3, label: '3_type'},
+    { value: 4, label: '4_type'},
+    { value: 5, label: '5_type'},
+];
 
 export default class AddSymbolForm extends Component  {
 
     constructor(props) {
         super(props);
-        this.state = {
-            context: this.getInitialContext()
-        }
+        this.state = this.getInitialState();
     }
 
-    getInitialContext = () => {
+    getInitialState = () => {
         return {
-            symbol: {descriptions: []},
+            symbol: {},
+            contexts: [],
             start: 0,
             word_shift: 0,
             word_len: 0,
             end: 0,
             text: '',
-            description: ''
+            context_type: {},
+            context_description: '',
+            showForm: false
         }
     }
 
@@ -28,30 +48,34 @@ export default class AddSymbolForm extends Component  {
         let new_symbol = {
             value: e.__isNew__ ? 'new' : e.value, 
             label: e.label, 
-            descriptions: e.__isNew__ ? [] : e.descriptions
-        }
-        let prevContext = this.state.context;
-        let nextContext = {
-            ...prevContext,
-            symbol: new_symbol
         }
 
-        this.setState({context: nextContext});
+        this.setState({symbol: new_symbol});
     }
 
-    onChageContext(e) {
-        let prevContext = this.state.context;
-        let nextContext = {
-            ...prevContext,
-            description: e.target.value
-        }
-        this.setState({context: nextContext})
-    }
-
-    getLocation = (selected_text) => {
+    getLocation = (text_nodes, anchorNode, anchorOffset, focusNode, focusOffset) => {
         const { text_chunk } = this.props;
-        let word_shift = text_chunk.indexOf(selected_text);
-        let word_len = selected_text.length;
+        let start_selection = 0;
+        let end_selection = 0;
+
+        for (let node of text_nodes) {
+            if (node == anchorNode) {
+                start_selection += anchorOffset;
+                break;
+            } else {
+                start_selection += node.data.toString().length;
+            }
+        }
+        for (let node of text_nodes) {
+            if (node == focusNode) {
+                end_selection += focusOffset;
+                break;
+            } else {
+                end_selection += node.data.toString().length;
+            }
+        }
+
+        let word_shift = start_selection;
 
         let start = 0;
         let end = text_chunk.length;
@@ -59,48 +83,66 @@ export default class AddSymbolForm extends Component  {
 
         for (let i = word_shift; i > 0; i--) {
             if (end_characters.includes(text_chunk[i])) {
-                start = i;
+                start = i + 1;
                 break;
             }
         }
 
         // мы должны "захватывать" символ окончания предложения.
         // ниже мы обрабатываем ситуацию, когда предложение оканчивается, например, на ???
-        let last_symbol = '';
-        for (let i = word_shift + word_len; i < text_chunk.length; i++) {
+        let prev_symbol = '';
+        for (let i = end_selection; i < text_chunk.length; i++) {
             if (end_characters.includes(text_chunk[i])) {
-                last_symbol = text_chunk;
-            } else if (last_symbol) {
-                end = i - 1;
+                prev_symbol = text_chunk[i];
+            } else if (prev_symbol) {
+                end = i;
                 break;
             }
         }
 
-        word_shift = word_shift - start;
-        start = start + this.props.start_position;
+        let word_len = end_selection - start_selection;
         return {start, word_shift, word_len, end}
     }
     
     onToggle = () => {
         const { symbolAddition, toggleSymbolAddition } = this.props;
-        let context = {}
 
         if (!symbolAddition) {
-            let sel = window.getSelection();
-            let selected_text = sel.toString()
+            let selection = window.getSelection();
+            let page_window = document.getElementById('page-window');
+            let text_nodes = [];
+            for (let node of page_window.childNodes) {
+                if (node.classList.contains(SQUARE_BRACKET)) {
+                    continue
+                }
+                
+                if (node.childNodes.length > 0) {
+                    text_nodes.push(node.childNodes[0]);
+                } else {
+                    text_nodes.push(node);
+                }
+            }
+
+            const {anchorNode, anchorOffset, focusNode, focusOffset} = selection;
+            let selected_text = selection.toString()
             
-            if (selected_text && sel.anchorNode && sel.anchorNode.parentElement.id == 'page-window'){
-                let { start, word_shift, word_len, end } = this.getLocation(selected_text);
-                                
-                let new_context = {
-                    ...this.state.context,
+            if (selected_text && text_nodes.includes(anchorNode) && text_nodes.includes(focusNode)){
+                let { start, word_shift, word_len, end } = this.getLocation(
+                    text_nodes, 
+                    anchorNode, 
+                    anchorOffset, 
+                    focusNode, 
+                    focusOffset
+                );
+                this.props.selectTextCoordinates({ start, word_shift, word_len, end });
+
+                this.setState({                    
                     text: selected_text,
                     start: start,
                     word_shift: word_shift,
                     word_len: word_len,
                     end: end
-                }
-                this.setState({context: new_context});
+                });
 
             } else {
                 alert('Прежде, чем добавить новый символ,\n' + 
@@ -109,72 +151,100 @@ export default class AddSymbolForm extends Component  {
                 return
             }
         } else {
-            this.setState({context: this.getInitialContext()})
+            this.setState(this.getInitialState());
+            this.props.selectTextCoordinates({});
         }
         toggleSymbolAddition();
     }
 
     onSubmit = (e) => {
         e.preventDefault();
-        let {symbol, description} = this.state.context;
-        if (!symbol.value) {
+        if (!this.state.symbol.value) {
             alert('Выберите или добавьте новый символ!');
-        } else if (symbol.value == 'new' && !description) {
-            alert('При добавлении нового символа нужно обязательно указать его описание!');
         } else {
-            this.setState({context: this.getInitialContext()});
-            this.props.tmpSaveSymbol(this.state.context);
+            const {start_position} = this.props;
+            const {
+                symbol, start, word_shift, word_len, end, contexts, context_type, context_description
+            } = this.state;
+
+            let data = {
+                symbol_id: symbol.value,
+                symbol_title: symbol.label,
+                start: start + start_position,
+                word_shift: word_shift,
+                word_len: word_len,
+                end: end + start_position,
+                context_ids: contexts.map(el => el.value),
+                context_type: context_type && context_type.value,
+                context_description: context_description,
+            }
+            this.props.tmpSaveSymbol(data);
+            this.setState(this.getInitialState());
         }
     }
 
     render() {
         const {symbolAddition, symbols} = this.props;
-        const {symbol} = this.state.context;
+        const {symbol, contexts, context_type, context_description} = this.state;
 
         if (!symbolAddition) {
             return <button onClick={this.onToggle}>Добавить символ</button>
         }
 
         return(
-            <div>
-                <div className="form-group">
-                    <label htmlFor="symbol">Символ</label>
-                    <Creatable
-                        id='symbol'
-                        value={symbol}
-                        options={symbols}
-                        onChange={this.onChangeSymbol}
-                    />
-                </div>
-                {
-                    symbol.descriptions.length > 0
-                    ?
-                    <div>
-                        <label htmlFor='symbol-descriptions'>Значения символа</label>
-                        <div id='symbol-descriptions'>
-                        {
-                            symbol.descriptions.map((d, i) => {
-                                return <div key={i} title={d}>{i+1}) {d.slice(0, 50)}{d.length > 50 ? '...' : ''}</div>
-                            })
-                        }
-                        </div>
+            <div id='add-information-form'>
+                <div>
+                    <div className="form-group">
+                        <label htmlFor="symbol">Символ</label>
+                        <Creatable
+                            id='symbol'
+                            value={symbol}
+                            options={symbols}
+                            onChange={this.onChangeSymbol}
+                        />
                     </div>
-                    :
-                    null
-                }
-                <div className="form-group">
-                    <label htmlFor="description">Новое значение символа</label>
-                    <textarea
-                        style={{fontSize: '14px'}}
-                        value={this.state.context.description}
-                        className="form-control"
-                        rows="5"
-                        name='description'
-                        id="description"
-                        onChange={::this.onChageContext}
-                    />
+                    <div className="form-group">
+                        <label htmlFor="contexts">Контексты</label>
+                        <Select
+                            isMulti
+                            id='contexts'
+                            value={contexts}
+                            onChange={contexts => this.setState({contexts})}
+                            options={tmp_contexts}
+                        />
+                    </div>
+                    {this.state.showForm
+                        ?
+                        <div className="form-group" id='add-context-form'>
+                            <Select
+                                value={context_type}
+                                onChange={context_type => this.setState({context_type})}
+                                options={tmp_context_types}
+                            />
+                            <textarea
+                                style={{fontSize: '14px'}}
+                                value={context_description}
+                                className="form-control"
+                                rows="5"
+                                name='context_description'
+                                onChange={e => this.setState({context_description: e.target.value})}
+                            />
+                            <button id='cancel-adding-context' onClick={() => this.setState({showForm: false})}>
+                                Отмена
+                            </button>
+                        </div>
+                        :
+                        <div>
+                            <button 
+                                id="add-context"
+                                onClick={() => this.setState({showForm: true})}
+                                title='Добавить новый контекст'
+                            >+</button>
+                        </div>
+
+                    }
                 </div>
-                <div className="btn-group" role="group">
+                <div className="btn-group" role="group" id='btns-save'>
                     <button type='submit' onClick={this.onSubmit} style={{marginRight: '10px'}}>Сохранить</button>
                     <button onClick={this.onToggle}>Отмена</button>
                 </div>
