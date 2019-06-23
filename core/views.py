@@ -77,7 +77,6 @@ def login_form_process(request_data, request):
         username = form.cleaned_data['login']
         password = form.cleaned_data['password']
 
-        # TODO: check whether it proper work when user is inactive, i.e. 'user.is_active = False'.
         user = authenticate(username=username, password=password)
         if user is None:
             # i.e. if 'user == None' then auth backend cant authenticate current 'login - password' pair.

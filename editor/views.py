@@ -1,23 +1,26 @@
-from collections import defaultdict
+from collections import defaultdict, namedtuple
 from functools import reduce
 from json import dumps
 from math import ceil
 
 from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth import get_user_model
-from django.db.models import F, IntegerField, Sum
+from django.db.models import F, IntegerField, Q, Sum
 from django.db.models.query import prefetch_related_objects
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
-from catalog.models import Author, Book, Existence, Location, Symbol, SymbolDescription
+from accounts.utils import guest_account
+from catalog.models import Author, Book, Existence, Location, Symbol
 from catalog.utils import get_text
 from core.forms import BookChoosing
 
 from .settings import BOOK_CHUNK_SIZE, error_messages
 
 
-def select(request, method):
+symbol_binds = namedtuple('SymbolBinds', ['value', 'label'])
+
+
+def select_book(request, method):
     if method == 'ajax':
         status, response = 500, "Error: internal server error."
         if request.POST:
@@ -38,7 +41,7 @@ def select(request, method):
                 return redirect('editor:main', form.cleaned_data['book'])
         else:
             form = BookChoosing()
-        return render(request, 'core/editor/select.html', {'form': form})
+        return render(request, 'editor/select_book.html', {'form': form})
 
 
 def main(request, book_id):
@@ -46,23 +49,14 @@ def main(request, book_id):
     # Можно просто в интерфейсе вывести div с соответствующим сообщением
     book = get_object_or_404(Book, id=book_id)
     context = _get_book_data(request, book)
+    user_id = None
+    if request.user.is_authenticated():
+        user_id = request.user.id
+    # get checked or added by user itself symbols
+    symbols = book.symbol_set.exclude(Q(checked=False) & ~Q(inserter_id=user_id)).values_list('id', 'name')
+    context['symbols'] = [symbol_binds(id_, name) for id_, name in symbols]
 
-    symbols = book.symbol_set.values_list('id', 'name', 'descriptions__text')
-
-    tmp_res = defaultdict(lambda: {'name': '', 'descriptions': []})
-    for s in symbols:
-        tmp_res[s[0]]['name'] = s[1]
-        if s[2]:
-            tmp_res[s[0]]['descriptions'].append(s[2])
-
-    symbols = [{
-        'value': symbol_id,
-        'label': symbol_data['name'],
-        'descriptions': symbol_data['descriptions']
-    } for symbol_id, symbol_data in tmp_res.items()]
-
-    context['symbols'] = symbols
-    return render(request, 'core/editor/main.html', context)
+    return render(request, 'editor/main.html', context)
 
 
 def get_page(request, book_id, page):
@@ -87,25 +81,27 @@ def get_page(request, book_id, page):
     return JsonResponse({'status': True, 'data': context}, safe=False)
 
 
+# TODO: check whether this works with new param `checked`
 def symbols(request):
     # "Поправил" вьюху для теста. В value нужно будет сувать id символа
     # в label - его название
 
     book_id = request.GET.get('book_id')
     q = request.GET.get('q')  # то, что ввёл пользователь (часть названия символа)
-
     book = Book.objects.get(id=book_id)
-    symbols = book.symbol_set.filter(name__contains=q).values_list('id', 'name')
 
-    result = [{
-        'value': symbol[0],
-        'label': symbol[1],
-    } for symbol in symbols]
+    user_id = None
+    if request.user.is_authenticated():
+        user_id = request.user.id
+    queried_symbols = book.symbol_set.filter(name_contains=q)\
+                                     .exclude(Q(checked=False) & ~Q(inserter_id=user_id)).values_list('id', 'name')
 
-    return JsonResponse(result, safe=False)
+    symbols_list = [symbol_binds(id_, name) for id_, name in queried_symbols]
+
+    return JsonResponse(symbols_list, safe=False)
 
 
-def addresses(request):
+def locations(request):
     symbol_id = request.POST.get('symbol', None)
     book_id = request.POST.get('book', None)
     if symbol_id is None or book_id is None:
@@ -116,20 +112,25 @@ def addresses(request):
         Symbol.objects.get(id=symbol_id)  # only for checking on "DoesNotExist" error
 
         exis_ids = Book.objects.get(id=book_id).existence_set.filter(symbol_id=symbol_id).values_list('id', flat=True)
-        qs = Location.objects.filter(existence_id__in=exis_ids).order_by('start').values_list(
+
+        user_id = None
+        if request.user.is_authenticated():
+            user_id = request.user.id
+        queried_locations = Location.objects.filter(existence_id__in=exis_ids)\
+                                            .exclude(Q(checked=False) & ~Q(inserter_id=user_id)).values_list(
             'start', 
             'word_shift',
             'word_len', 
             'end_shift'
         )
-        adrs = list(qs)
+        locations_ = list(queried_locations)
 
     except (TypeError, AssertionError):
         return HttpResponseBadRequest("You should pass correct identifiers.")
     except ObjectDoesNotExist:
         return HttpResponseNotFound("Can't find objects by passed identifiers.")
 
-    return HttpResponse(dumps({'locations': adrs}), content_type='application/json')
+    return JsonResponse({'locations': locations_})
 
 
 def _check_crossing(board, addrs, is_left):
@@ -163,27 +164,30 @@ def _get_chunk(adrs, text, chunk_size, page, checking):
 
 
 def _get_book_data(request, book, page=1):
-
     text = get_text(book.file)
-    adrs, checking = {}, False
+    locations_, checking, user_id = {}, False, None
 
     prefetch_related_objects([book], 'existence_set')
     all_book_existences = book.existence_set.all()
     if len(all_book_existences) > 0:
         checking = True
-        adrs = reduce(lambda x, y: x | y, [existence.locations.all() for existence in all_book_existences])
+        locations_ = reduce(lambda x, y: x | y, [existence.locations.all() for existence in all_book_existences])
 
-    text_chunk, adrs, start_position = _get_chunk(adrs, text, BOOK_CHUNK_SIZE, page, checking)
+    if request.user.is_authenticated():
+        user_id = request.user.id
+    locations_ = locations_.exclude(Q(checked=False) & ~Q(inserter_id=user_id))
+
+    text_chunk, locations_, start_position = _get_chunk(locations_, text, BOOK_CHUNK_SIZE, page, checking)
 
     if checking:
-        qs = adrs.order_by('start').values_list('existence__symbol', 'start', 'word_shift', 'word_len', 'end_shift')
+        query_set = locations_.values_list('existence__symbol', 'start', 'word_shift', 'word_len', 'end_shift')
 
-        adrs = defaultdict(list)
-        for address in qs:
-            adrs[address[0]].append(list(address[1:]))
+        locations_ = defaultdict(list)
+        for loc in query_set:
+            locations_[loc[0]].append(list(loc[1:]))
 
     return {
-        'existences': dict(adrs),  # чтобы корректно пробрасывать из шаблона в react.
+        'existences': dict(locations_),  # чтобы корректно пробрасывать из шаблона в react.
         'text_chunk': text_chunk.replace('\n', ' '), 
         'page': page, 
         'number_pages': ceil(len(text) / BOOK_CHUNK_SIZE),
@@ -192,51 +196,41 @@ def _get_book_data(request, book, page=1):
     }
 
 
-def tmp_save_symbol(request, book_id, *args, **kwargs):
+# TODO: add storing of context within new symbol... or do it only in `store_context` view
+def store_location(request, book_id, *args, **kwargs):
     book = Book.objects.get(pk=book_id)
-    author = book.author
 
-    tmp_author, _ = Author.objects.using('temp').get_or_create(
-        pk=author.pk,
-        first_name=author.first_name,
-        last_name=author.last_name,
-    )
-
-    tmp_book, _ = Book.objects.using('temp').get_or_create(
-        pk=book.pk,
-        title=book.title,
-        author=tmp_author,
-    )
-    
     symbol_id = request.POST['symbol_id']
     symbol_title = request.POST['symbol_title'].strip().lower()
 
     if symbol_id == 'new':
-        tmp_symbol = Symbol.objects.using('temp').get_or_create(name=symbol_title)
+        symbol, _ = Symbol.objects.get_or_create(name=symbol_title)
     else:
         symbol = Symbol.objects.get(pk=symbol_id)
-        tmp_symbol, _ = Symbol.objects.using('temp').get_or_create(name=symbol.name)
 
-    description = request.POST['description'].strip()
-    if description:
-        SymbolDescription.objects.using('temp').create(symbol=tmp_symbol, text=description)
+    existence, _ = Existence.objects.get_or_create(symbol=symbol, book=book)
+    inserter = request.user if request.user.is_authenticated else guest_account(get_id_only=False)
+    checked = True if (inserter.is_superuser or inserter.is_staff) else False
 
-    tmp_existence, _ = Existence.objects.using('temp').get_or_create(symbol=tmp_symbol, book=tmp_book)
-
-    if request.user.pk is not None:
-        tmp_inserter, _ = get_user_model().objects.using('temp').get_or_create(username=request.user.username)
-    else:
-        # на случай, если у нас размечает не авторизованный пользователь
-        tmp_inserter, _ = get_user_model().objects.using('temp').get_or_create(username='temp_user')
-
-    Location.objects.using('temp').create(
-        existence=tmp_existence,
+    new_loc = Location.objects.create(
+        existence=existence,
         start=request.POST['start'],
         end_shift=request.POST['end'],
         word_len=request.POST['word_len'],
         word_shift=request.POST['word_shift'],
-        inserter=tmp_inserter
+        inserter=inserter,
+        checked=checked,
     )
 
+    if checked:
+        new_loc.who_checked = inserter
+        new_loc.date_checked = new_loc.date_joined
+        new_loc.save()
+
     # Ответ оставить пока именно в таком виде. Нам пока нет нужды ещё что-то возвращать.
+    return JsonResponse({'status': True}, safe=False)
+
+
+def store_context(request, book_id):
+    # TODO: write code here :))
     return JsonResponse({'status': True}, safe=False)

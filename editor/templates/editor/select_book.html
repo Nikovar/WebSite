@@ -46,7 +46,7 @@
 {% endblock %}
 
 {% block content %}
-    <form action="{% url 'editor:select' %}" method="post" class="column centered align-center">
+    <form action="{% url 'editor:select_book' %}" method="post" class="column centered align-center">
         {% csrf_token %}
         {{ form }}
         <button type="submit" class="disabled" disabled>Редактировать</button>
@@ -99,7 +99,7 @@
 
         // TODO: REALIZE AND CHECK THIS!!!
         function show_errors(jqXHR, textStatus, errorThrown){
-            console.log('xyi')
+            console.log('Nope')
         }
 
         function enableControls(){

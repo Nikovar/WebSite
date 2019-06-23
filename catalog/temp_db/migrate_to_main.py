@@ -11,7 +11,7 @@ CLEANER_CHECKERS = {
     Location._meta.object_name: lambda loc: False,  # because of it never to be
     Existence._meta.object_name: lambda ex: not ex.locations.exists(),
     Symbol._meta.object_name: lambda symb: not symb.existences.exists(),
-    SymbolDescription._meta.object_name: lambda descr: False,  # because of CASCADE deleting descriptions of removed symbol
+    # SymbolDescription._meta.object_name: lambda descr: False,  # because of CASCADE deleting descriptions of removed symbol
     Book._meta.object_name: lambda book: not book.existence_set.exists(),
     Language._meta.object_name: lambda lang: not lang.book_set.exists(),
     Genre._meta.object_name: lambda genre: not genre.book_set.exists(),
@@ -81,7 +81,8 @@ def symbol_saver(tmp_symbol, auto_saved_objects):
 def symbol_descr_saver(tmp_descr, auto_saved_objects, related_symbol=None):
     if related_symbol is None:
         related_symbol, _ = Symbol.objects.get_or_create(name=tmp_descr.symbol.name)
-    return SymbolDescription.objects.get_or_create(symbol=related_symbol, text=tmp_descr.text)
+    # return SymbolDescription.objects.get_or_create(symbol=related_symbol, text=tmp_descr.text)
+    return None
 
 
 def location_saver(loc, auto_saved_objects):
