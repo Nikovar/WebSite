@@ -150,7 +150,7 @@ class Location(BaseWithMetaInfo):
 
     def __str__(self):
         return '"{}" in "{}" from pos №{} with {} contexts'.format(
-                   self.existence.symbol.name, self.existence.book.title, self.start, self.context_set.count()
+                   self.existence.symbol.name, self.existence.book.title, self.start, self.contexts.count()
         )
 
 
@@ -165,7 +165,6 @@ class ContextType(BaseWithMetaInfo):
 
 
 class Context(BaseWithMetaInfo):
-    locations = models.ManyToManyField(Location)
     type = models.ForeignKey(ContextType, on_delete=models.CASCADE)
     text = models.CharField(max_length=CONTEXT_TEXT_LEN)
 

@@ -25,29 +25,28 @@ class PageWindow extends Component {
     highlight = () => {
         let { text_chunk, existences, symbol, start_position, selected_text_coordinates } = this.props;
         let exs_to_highlight = existences && symbol && existences[symbol.value];
-        
+        let new_chunk = '';
+        let has_coordinates = Object.keys(selected_text_coordinates).length > 0;
+
+        if (has_coordinates) {
+            let start_context = selected_text_coordinates.start;
+            let start_selected_text = selected_text_coordinates.word_shift;
+            let end_selected_text = start_selected_text + selected_text_coordinates.word_len;
+            let end_context = selected_text_coordinates.end;
+
+            let first_part = text_chunk.slice(start_context, start_selected_text);
+            let selected_text = text_chunk.slice(start_selected_text, end_selected_text);
+            let second_part = text_chunk.slice(end_selected_text, end_context);
+
+            new_chunk += `<span>${text_chunk.slice(0, start_context)}</span>`;
+            new_chunk += `<span style="background-color: #ddd">${first_part}`;
+            new_chunk += `<span style="color:#000; background-color: #FF0000;">${selected_text}</span>`;
+            new_chunk += `${second_part}</span>`;
+            new_chunk += `<span>${text_chunk.slice(end_context, text_chunk.length - 1)}</span>`;
+            return new_chunk;
+        }
+                
         if (exs_to_highlight) {
-            let new_chunk = '';
-            let has_coordinates = Object.keys(selected_text_coordinates).length > 0;
-
-            if (has_coordinates) {
-                let start_context = selected_text_coordinates.start;
-                let start_selected_text = selected_text_coordinates.word_shift;
-                let end_selected_text = start_selected_text + selected_text_coordinates.word_len;
-                let end_context = selected_text_coordinates.end;
-
-                let first_part = text_chunk.slice(start_context, start_selected_text);
-                let selected_text = text_chunk.slice(start_selected_text, end_selected_text);
-                let second_part = text_chunk.slice(end_selected_text, end_context);
-
-                new_chunk += `<span>${text_chunk.slice(0, start_context)}</span>`;
-                new_chunk += `<span style="background-color: #ddd">${first_part}`;
-                new_chunk += `<span style="color:#000; background-color: #FF0000;">${selected_text}</span>`;
-                new_chunk += `${second_part}</span>`;
-                new_chunk += `<span>${text_chunk.slice(end_context, text_chunk.length - 1)}</span>`;
-                return new_chunk;
-            }
-
             let positions = {};
             exs_to_highlight.map((exs, i) => {
                 let start = (exs[0] + exs[1]) - start_position;

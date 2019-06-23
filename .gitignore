@@ -3,5 +3,5 @@
 */__pycache__/
 staticfiles/
 node_modules/
-*/migrations/
+
 /venv/

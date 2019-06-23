@@ -1,26 +1,9 @@
 import React, {Component} from 'react';
 import Select from 'react-select';
 import Creatable from 'react-select/lib/Creatable';
-import {SQUARE_BRACKET} from '../utils';
+import AsyncSelect from 'react-select/lib/Async';
+import {SQUARE_BRACKET, getContexts, getContextTypes} from '../utils';
 
-const tmp_contexts = [
-    { value: 1, label: '1_context'},
-    { value: 2, label: '2_context'},
-    { value: 3, label: '3_context'},
-    { value: 4, label: '4_context'},
-    { value: 5, label: '5_context'},
-    { value: 6, label: '6_context'},
-    { value: 7, label: '7_context'},
-    { value: 8, label: '8_context'},
-];
-
-const tmp_context_types = [
-    { value: 1, label: '1_type'},
-    { value: 2, label: '2_type'},
-    { value: 3, label: '3_type'},
-    { value: 4, label: '4_type'},
-    { value: 5, label: '5_type'},
-];
 
 export default class AddSymbolForm extends Component  {
 
@@ -112,7 +95,7 @@ export default class AddSymbolForm extends Component  {
             let page_window = document.getElementById('page-window');
             let text_nodes = [];
             for (let node of page_window.childNodes) {
-                if (node.classList.contains(SQUARE_BRACKET)) {
+                if (node.classList && node.classList.contains(SQUARE_BRACKET)) {
                     continue
                 }
                 
@@ -144,6 +127,7 @@ export default class AddSymbolForm extends Component  {
                     end: end
                 });
 
+
             } else {
                 alert('Прежде, чем добавить новый символ,\n' + 
                       'вы должны выделить текст на странице\n' +
@@ -173,7 +157,7 @@ export default class AddSymbolForm extends Component  {
                 start: start + start_position,
                 word_shift: word_shift,
                 word_len: word_len,
-                end: end + start_position,
+                end: end,
                 context_ids: contexts.map(el => el.value),
                 context_type: context_type && context_type.value,
                 context_description: context_description,
@@ -205,21 +189,22 @@ export default class AddSymbolForm extends Component  {
                     </div>
                     <div className="form-group">
                         <label htmlFor="contexts">Контексты</label>
-                        <Select
+                        <AsyncSelect
                             isMulti
-                            id='contexts'
-                            value={contexts}
-                            onChange={contexts => this.setState({contexts})}
-                            options={tmp_contexts}
+                            id='contexts-style'
+                            loadOptions={getContexts}
+                            defaultOptions
+                            onChange={(contexts) => this.setState({contexts})}
                         />
                     </div>
                     {this.state.showForm
                         ?
                         <div className="form-group" id='add-context-form'>
-                            <Select
+                            <AsyncSelect
                                 value={context_type}
+                                loadOptions={getContextTypes}
+                                defaultOptions
                                 onChange={context_type => this.setState({context_type})}
-                                options={tmp_context_types}
                             />
                             <textarea
                                 style={{fontSize: '14px'}}

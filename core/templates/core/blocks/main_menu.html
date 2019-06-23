@@ -14,7 +14,7 @@
     </li>
 {#    <li{% if current == 4 %} class="current"{% endif %}><a href="#">FAQ</a></li>#}
     <li{% if current == 4 %} class="current"{% endif %}>
-        <span><a href="{% url 'editor:select' %}">Редактор</a></span>
+        <span><a href="{% url 'editor:select_book' %}">Редактор</a></span>
         <ul>
             <li><a href="{% url 'editor:main' book_id=1 %}">Посадочная страница</a></li>
         </ul>

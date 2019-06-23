@@ -94,7 +94,7 @@ export function tmpSaveSymbol(data) {
 
         $.ajax({
             type: 'POST',
-            url: `tmp_save_symbol/`,
+            url: `store_location/`,
             dataType: 'json',
             data: data,
             success: (data) => {

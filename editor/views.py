@@ -4,20 +4,18 @@ from json import dumps
 from math import ceil
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import transaction
 from django.db.models import F, IntegerField, Q, Sum
 from django.db.models.query import prefetch_related_objects
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from accounts.utils import guest_account
-from catalog.models import Author, Book, Existence, Location, Symbol
+from catalog.models import Author, Book, Existence, Location, Symbol, Context, ContextType
 from catalog.utils import get_text
 from core.forms import BookChoosing
 
 from .settings import BOOK_CHUNK_SIZE, error_messages
-
-
-symbol_binds = namedtuple('SymbolBinds', ['value', 'label'])
 
 
 def select_book(request, method):
@@ -50,11 +48,15 @@ def main(request, book_id):
     book = get_object_or_404(Book, id=book_id)
     context = _get_book_data(request, book)
     user_id = None
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         user_id = request.user.id
     # get checked or added by user itself symbols
-    symbols = book.symbol_set.exclude(Q(checked=False) & ~Q(inserter_id=user_id)).values_list('id', 'name')
-    context['symbols'] = [symbol_binds(id_, name) for id_, name in symbols]
+    symbols = book.symbol_set.exclude(Q(checked=False) & ~Q(inserter_id=user_id)).values('id', 'name')
+    
+    context['symbols'] = [{
+        'value': symbol['id'],
+        'label': symbol['name']
+    } for symbol in symbols]
 
     return render(request, 'editor/main.html', context)
 
@@ -74,7 +76,6 @@ def get_page(request, book_id, page):
 
     try:
         context = _get_book_data(request, book, page)
-        print(context['existences'])
     except AssertionError:
         return HttpResponse('""', content_type='application/json')
 
@@ -114,10 +115,11 @@ def locations(request):
         exis_ids = Book.objects.get(id=book_id).existence_set.filter(symbol_id=symbol_id).values_list('id', flat=True)
 
         user_id = None
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             user_id = request.user.id
-        queried_locations = Location.objects.filter(existence_id__in=exis_ids)\
-                                            .exclude(Q(checked=False) & ~Q(inserter_id=user_id)).values_list(
+        queried_locations = Location.objects.filter(existence_id__in=exis_ids).exclude(
+            Q(checked=False) & ~Q(inserter_id=user_id)
+        ).values_list(
             'start', 
             'word_shift',
             'word_len', 
@@ -131,6 +133,30 @@ def locations(request):
         return HttpResponseNotFound("Can't find objects by passed identifiers.")
 
     return JsonResponse({'locations': locations_})
+
+
+def contexts(request):
+    user_id = None
+    if request.user.is_authenticated:
+        user_id = request.user.id
+
+    res = [{
+        'value': c.pk,
+        'label': c.text[:20] + '...' if len(c.text) > 20 else c.text
+    } for c in Context.objects.exclude(Q(checked=False) & ~Q(inserter_id=user_id))[:20]]
+    return JsonResponse({'result': res})
+
+
+def context_types(request):
+    user_id = None
+    if request.user.is_authenticated:
+        user_id = request.user.id
+
+    res = [{
+        'value': ct.pk,
+        'label': ct.name
+    } for ct in ContextType.objects.exclude(Q(checked=False) & ~Q(inserter_id=user_id))[:20]]
+    return JsonResponse({'result': res})
 
 
 def _check_crossing(board, addrs, is_left):
@@ -173,7 +199,7 @@ def _get_book_data(request, book, page=1):
         checking = True
         locations_ = reduce(lambda x, y: x | y, [existence.locations.all() for existence in all_book_existences])
 
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         user_id = request.user.id
     locations_ = locations_.exclude(Q(checked=False) & ~Q(inserter_id=user_id))
 
@@ -203,29 +229,48 @@ def store_location(request, book_id, *args, **kwargs):
     symbol_id = request.POST['symbol_id']
     symbol_title = request.POST['symbol_title'].strip().lower()
 
-    if symbol_id == 'new':
-        symbol, _ = Symbol.objects.get_or_create(name=symbol_title)
-    else:
-        symbol = Symbol.objects.get(pk=symbol_id)
+    with transaction.atomic():
+        if symbol_id == 'new':
+            symbol, _ = Symbol.objects.get_or_create(name=symbol_title)
+        else:
+            symbol = Symbol.objects.get(pk=symbol_id)
 
-    existence, _ = Existence.objects.get_or_create(symbol=symbol, book=book)
-    inserter = request.user if request.user.is_authenticated else guest_account(get_id_only=False)
-    checked = True if (inserter.is_superuser or inserter.is_staff) else False
+        if request.user.is_authenticated:   
+            inserter = request.user
+        else:
+            inserter, _ = guest_account(get_id_only=False)
 
-    new_loc = Location.objects.create(
-        existence=existence,
-        start=request.POST['start'],
-        end_shift=request.POST['end'],
-        word_len=request.POST['word_len'],
-        word_shift=request.POST['word_shift'],
-        inserter=inserter,
-        checked=checked,
-    )
+        existence, _ = Existence.objects.get_or_create(symbol=symbol, book=book)
+        checked = True if (inserter.is_superuser or inserter.is_staff) else False
 
-    if checked:
-        new_loc.who_checked = inserter
-        new_loc.date_checked = new_loc.date_joined
-        new_loc.save()
+        new_loc = Location.objects.create(
+            existence=existence,
+            start=request.POST['start'],
+            end_shift=request.POST['end'],
+            word_len=request.POST['word_len'],
+            word_shift=request.POST['word_shift'],
+            inserter=inserter,
+            checked=checked,
+        )
+
+        type_id = request.POST['context_type']
+        text = request.POST['context_description'].strip()
+        if type_id and text:
+            new_context = Context.objects.create(type_id=type_id, text=text, inserter=inserter, checked=checked)
+            new_loc.contexts.add(new_context)
+            if checked:
+                new_context.who_checked = inserter
+                new_context.date_checked = new_loc.date_joined
+                new_context.save()
+
+        for context_id in request.POST.getlist('context_ids[]'):
+            cont = Context.objects.get(pk=context_id)
+            new_loc.contexts.add(cont)
+
+        if checked:
+            new_loc.who_checked = inserter
+            new_loc.date_checked = new_loc.date_joined
+            new_loc.save()
 
     # Ответ оставить пока именно в таком виде. Нам пока нет нужды ещё что-то возвращать.
     return JsonResponse({'status': True}, safe=False)

@@ -11,3 +11,15 @@ export const COLOR_SCHEME = {
     5: "#ffff00",
     6: "#87cefa",
 };
+
+function getOptions(input, href, additional) {
+    return fetch(`${href}?q=${input}${additional ? '&' + additional : ''}`, {credentials: 'same-origin'})
+        .then((response) => {
+            return response.json()
+        }).then((json) => {
+            return json.result;
+        });
+}
+
+export const getContexts = (input) => getOptions(input, '/editor/contexts/');
+export const getContextTypes = (input) => getOptions(input, '/editor/context_types')
