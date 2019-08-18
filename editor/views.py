@@ -1,12 +1,9 @@
-from collections import defaultdict, namedtuple
-from functools import reduce
+from collections import defaultdict
 from json import dumps
 from math import ceil
 
-from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from django.db.models import F, IntegerField, Q, Sum
-from django.db.models.query import prefetch_related_objects
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
@@ -26,7 +23,7 @@ def select_book(request, method):
                 # ok, user chose the author, so we should give a set of related books:
                 try:
                     author = Author.objects.get(id=int(request.POST['author']))
-                except ObjectDoesNotExist:
+                except Author.DoesNotExist:
                     status, response = 404, error_messages['author']
                 else:
                     status, response = 200, dumps({i: t for i, t in author.book_set.values_list('id', 'title')},
@@ -84,9 +81,6 @@ def get_page(request, book_id, page):
 
 # TODO: check whether this works with new param `checked`
 def symbols(request):
-    # "Поправил" вьюху для теста. В value нужно будет сувать id символа
-    # в label - его название
-
     book_id = request.GET.get('book_id')
     q = request.GET.get('q')  # то, что ввёл пользователь (часть названия символа)
     book = Book.objects.get(id=book_id)
@@ -94,12 +88,19 @@ def symbols(request):
     user_id = None
     if request.user.is_authenticated():
         user_id = request.user.id
-    queried_symbols = book.symbol_set.filter(name_contains=q)\
-                                     .exclude(Q(checked=False) & ~Q(inserter_id=user_id)).values_list('id', 'name')
 
-    symbols_list = [symbol_binds(id_, name) for id_, name in queried_symbols]
+    queried_symbols = book.symbol_set.filter(
+        name_contains=q
+    ).exclude(
+        Q(checked=False) & ~Q(inserter_id=user_id)
+    ).values_list('pk', 'name')
 
-    return JsonResponse(symbols_list, safe=False)
+    symbols_list = [{
+        'value': s.pk,
+        'label': s.name,
+    } for s in queried_symbols]
+
+    return JsonResponse([], safe=False)
 
 
 def locations(request):
@@ -129,8 +130,10 @@ def locations(request):
 
     except (TypeError, AssertionError):
         return HttpResponseBadRequest("You should pass correct identifiers.")
-    except ObjectDoesNotExist:
-        return HttpResponseNotFound("Can't find objects by passed identifiers.")
+    except Book.DoesNotExist:
+        return HttpResponseNotFound("Can't find book with id={}".format(book_id))
+    except Symbol.DoesNotExist:
+        return HttpResponseNotFound("Can't find symbol with id={}".format(symbol_id))
 
     return JsonResponse({'locations': locations_})
 
@@ -190,30 +193,22 @@ def _get_chunk(adrs, text, chunk_size, page, checking):
 
 
 def _get_book_data(request, book, page=1):
+    user_id = request.user.id if request.user.is_authenticated else None
+    locations = Location.objects.filter(existence__book=book).exclude(Q(checked=False) & ~Q(inserter_id=user_id))
+    checking = locations.exists()
     text = get_text(book.file)
-    locations_, checking, user_id = {}, False, None
 
-    prefetch_related_objects([book], 'existence_set')
-    all_book_existences = book.existence_set.all()
-    if len(all_book_existences) > 0:
-        checking = True
-        locations_ = reduce(lambda x, y: x | y, [existence.locations.all() for existence in all_book_existences])
-
-    if request.user.is_authenticated:
-        user_id = request.user.id
-    locations_ = locations_.exclude(Q(checked=False) & ~Q(inserter_id=user_id))
-
-    text_chunk, locations_, start_position = _get_chunk(locations_, text, BOOK_CHUNK_SIZE, page, checking)
+    text_chunk, locations, start_position = _get_chunk(locations, text, BOOK_CHUNK_SIZE, page, checking)
 
     if checking:
-        query_set = locations_.values_list('existence__symbol', 'start', 'word_shift', 'word_len', 'end_shift')
+        query_set = locations.values_list('existence__symbol', 'start', 'word_shift', 'word_len', 'end_shift')
 
-        locations_ = defaultdict(list)
+        locations = defaultdict(list)
         for loc in query_set:
-            locations_[loc[0]].append(list(loc[1:]))
+            locations[loc[0]].append(list(loc[1:]))
 
     return {
-        'existences': dict(locations_),  # чтобы корректно пробрасывать из шаблона в react.
+        'existences': dict(locations),  # чтобы корректно пробрасывать из шаблона в react.
         'text_chunk': text_chunk.replace('\n', ' '), 
         'page': page, 
         'number_pages': ceil(len(text) / BOOK_CHUNK_SIZE),
