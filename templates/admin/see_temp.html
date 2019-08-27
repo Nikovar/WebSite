@@ -1,0 +1,49 @@
+{% extends 'admin/base_site.html' %}
+{% load utils %}
+
+{% block content %}
+    <form method="POST">
+        {% csrf_token %}
+        <div style="float: left; width: 80%">
+            {% for m in changes %}
+                {% if changes_counts|get_item:m.model_name != 0 %}
+                <fieldset style="margin-bottom: 15px;">
+                    <legend>{{ m.model_name }}</legend>
+                    <table>
+                        <thead>
+                            <tr>
+                                {% for field in m.fields %}
+                                    <th>{{ field }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for value in m.values %}
+                                <tr>
+                                    {% for field in value %}
+                                        <td>{{ field }}</td>
+                                    {% endfor %}
+                                    <td>
+                                        <input type="checkbox" name="{{ m.model_name }}-{{ value.0 }}">
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </fieldset>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div>
+            {% if changes_exists %}
+                <p>Что сделать с выбранными элементами:</p>
+                <input type='submit' name='_action_' value="Store" style="display: block; margin-bottom: 10px;">
+                <input type='submit' name='_action_' value="Delete">
+            {% else %}
+                <p>Нет изменений для отображения.</p>
+            {% endif %}
+        </div>
+    </form>
+{% endblock %}
+
+

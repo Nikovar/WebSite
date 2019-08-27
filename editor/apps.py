@@ -1,9 +1,9 @@
 from django.apps import AppConfig
-import catalog.temp.settings as local_settings
+from . import settings as local_settings
 
 
-class TempConfig(AppConfig):
-    name = 'catalog.temp'
+class EditorConfig(AppConfig):
+    name = 'editor'
 
     def __init__(self, app_name, app_module):
         AppConfig.__init__(self, app_name, app_module)
