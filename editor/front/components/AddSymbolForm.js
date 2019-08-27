@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
+import {Modal} from 'react-bootstrap';
 import Select from 'react-select';
 import Creatable from 'react-select/lib/Creatable';
 import AsyncSelect from 'react-select/lib/Async';
 import {SQUARE_BRACKET, getContexts, getContextTypes} from '../utils';
+import ContextModal from './ContextModal';
 
 
 export default class AddSymbolForm extends Component  {
@@ -177,6 +179,7 @@ export default class AddSymbolForm extends Component  {
 
         return(
             <div id='add-information-form'>
+                {this.state.showForm && <ContextModal />}
                 <div>
                     <div className="form-group">
                         <label htmlFor="symbol">Символ</label>
@@ -197,37 +200,13 @@ export default class AddSymbolForm extends Component  {
                             onChange={(contexts) => this.setState({contexts})}
                         />
                     </div>
-                    {this.state.showForm
-                        ?
-                        <div className="form-group" id='add-context-form'>
-                            <AsyncSelect
-                                value={context_type}
-                                loadOptions={getContextTypes}
-                                defaultOptions
-                                onChange={context_type => this.setState({context_type})}
-                            />
-                            <textarea
-                                style={{fontSize: '14px'}}
-                                value={context_description}
-                                className="form-control"
-                                rows="5"
-                                name='context_description'
-                                onChange={e => this.setState({context_description: e.target.value})}
-                            />
-                            <button id='cancel-adding-context' onClick={() => this.setState({showForm: false})}>
-                                Отмена
-                            </button>
-                        </div>
-                        :
-                        <div>
-                            <button 
-                                id="add-context"
-                                onClick={() => this.setState({showForm: true})}
-                                title='Добавить новый контекст'
-                            >+</button>
-                        </div>
-
-                    }
+                    <div>
+                        <button 
+                            id="add-context"
+                            onClick={() => this.setState({showForm: true})}
+                            title='Добавить новый контекст'
+                        >+</button>
+                    </div>
                 </div>
                 <div className="btn-group" role="group" id='btns-save'>
                     <button type='submit' onClick={this.onSubmit} style={{marginRight: '10px'}}>Сохранить</button>

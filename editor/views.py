@@ -219,6 +219,7 @@ def _get_book_data(request, book, page=1):
 
 # TODO: add storing of context within new symbol... or do it only in `store_context` view
 def store_location(request, book_id, *args, **kwargs):
+
     book = Book.objects.get(pk=book_id)
 
     symbol_id = request.POST['symbol_id']
@@ -248,8 +249,8 @@ def store_location(request, book_id, *args, **kwargs):
             checked=checked,
         )
 
-        type_id = request.POST['context_type']
-        text = request.POST['context_description'].strip()
+        type_id = request.POST.get('context_type')
+        text = request.POST.get('context_description', '').strip()
         if type_id and text:
             new_context = Context.objects.create(type_id=type_id, text=text, inserter=inserter, checked=checked)
             new_loc.contexts.add(new_context)
