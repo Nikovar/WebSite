@@ -23,8 +23,6 @@ export default class AddSymbolForm extends Component  {
             word_len: 0,
             end: 0,
             text: '',
-            context_type: {},
-            context_description: '',
             showForm: false
         }
     }
@@ -149,9 +147,7 @@ export default class AddSymbolForm extends Component  {
             alert('Выберите или добавьте новый символ!');
         } else {
             const {start_position} = this.props;
-            const {
-                symbol, start, word_shift, word_len, end, contexts, context_type, context_description
-            } = this.state;
+            const { symbol, start, word_shift, word_len, end, contexts } = this.state;
 
             let data = {
                 symbol_id: symbol.value,
@@ -161,8 +157,6 @@ export default class AddSymbolForm extends Component  {
                 word_len: word_len,
                 end: end,
                 context_ids: contexts.map(el => el.value),
-                context_type: context_type && context_type.value,
-                context_description: context_description,
             }
             this.props.tmpSaveSymbol(data);
             this.setState(this.getInitialState());
@@ -170,8 +164,8 @@ export default class AddSymbolForm extends Component  {
     }
 
     render() {
-        const {symbolAddition, symbols} = this.props;
-        const {symbol, contexts, context_type, context_description} = this.state;
+        const {symbolAddition, symbols, show_context_modal, showContextModal, hideContextModal} = this.props;
+        const {symbol, contexts} = this.state;
 
         if (!symbolAddition) {
             return <button onClick={this.onToggle}>Добавить символ</button>
@@ -179,7 +173,7 @@ export default class AddSymbolForm extends Component  {
 
         return(
             <div id='add-information-form'>
-                {this.state.showForm && <ContextModal />}
+                {show_context_modal && <ContextModal hideContextModal={hideContextModal}/>}
                 <div>
                     <div className="form-group">
                         <label htmlFor="symbol">Символ</label>
@@ -191,7 +185,10 @@ export default class AddSymbolForm extends Component  {
                         />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="contexts">Контексты</label>
+                        <label htmlFor="contexts">
+                            Контексты
+                            <a className="add-context" onClick={showContextModal} title='Создать новый контекст'>+</a>
+                        </label>
                         <AsyncSelect
                             isMulti
                             id='contexts-style'
@@ -199,13 +196,6 @@ export default class AddSymbolForm extends Component  {
                             defaultOptions
                             onChange={(contexts) => this.setState({contexts})}
                         />
-                    </div>
-                    <div>
-                        <button 
-                            id="add-context"
-                            onClick={() => this.setState({showForm: true})}
-                            title='Добавить новый контекст'
-                        >+</button>
                     </div>
                 </div>
                 <div className="btn-group" role="group" id='btns-save'>

@@ -138,12 +138,46 @@
   cursor: pointer;
 }
 
-#cancel-adding-context,
-#add-context {
+#cancel-adding-context {
   background-color: red;
   color: #000;
+} 
+
+a.add-context {
+  position: relative;
+  display: inline-block;
+  margin-left: 10px;
+  width: 2em;
+  height: 2em;
+  line-height: 2em;
+  vertical-align: middle;
+  text-align: center;
+  text-decoration: none;
+  color: #000;
+  background: #11ABB0;
+  outline: none;
+  border-radius: 5px;
+  box-shadow: 0 0 0 1px #ddd inset, 0 1px 1px #fff;
+}
+a.add-context:hover {
+  background: #dcdcdc linear-gradient(#fff, #dcdcdc);
+  box-shadow: 0 0 0 1px #aaa inset, 0 1px 1px #aaa;
+  cursor: pointer;
+}
+a.add-context:active {
+  background: none;
+  box-shadow: 0 0 0 1px #bbb inset, 0 1px 3px rgba(0,0,0,.5) inset, 0 1px 2px #fff;
 }
 
 #btns-save {
   margin-top: 20px;
+}
+
+/*Всё что с modal - дополнительные стили для компонентов Modal*/
+.modal-backdrop.fade.in {
+  opacity: 0.3;
+}
+
+.modal-header {
+  margin-top: 40px;
 }

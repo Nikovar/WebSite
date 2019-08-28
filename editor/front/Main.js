@@ -1,9 +1,8 @@
-
 import React, {Component} from 'react';
 import { SymbolNavigation, PageWindow, AddSymbolForm } from "./components"
 import { Row, Col } from 'react-bootstrap';
 import {connect} from 'react-redux';
-import {selectSymbol, tmpSaveSymbol, updatePage, toggleSymbolAddition, selectTextCoordinates} from './actions'
+import {selectSymbol, tmpSaveSymbol, updatePage, toggleSymbolAddition, selectTextCoordinates, hideContextModal, showContextModal} from './actions'
 
 class Main extends Component {
 
@@ -11,7 +10,8 @@ class Main extends Component {
         const {
             symbol, symbols, selectSymbol, text_chunk, number_pages, page, 
             updatePage, symbolAddition, toggleSymbolAddition, tmpSaveSymbol, 
-            existences, start_position, selected_text_coordinates, selectTextCoordinates
+            existences, start_position, selected_text_coordinates, selectTextCoordinates,
+            show_context_modal, showContextModal, hideContextModal,
         } = this.props;
 
         return(
@@ -45,6 +45,9 @@ class Main extends Component {
                             tmpSaveSymbol={tmpSaveSymbol}
                             start_position={start_position}
                             selectTextCoordinates={selectTextCoordinates}
+                            show_context_modal={show_context_modal}
+                            showContextModal={showContextModal}
+                            hideContextModal={hideContextModal}
                         />
                     </Col>
                 </Row>
@@ -66,7 +69,8 @@ const mapStateToProps = state => {
         symbolAddition: editor.symbolAddition,
         existences: editor.existences,
         start_position: editor.start_position,
-        selected_text_coordinates: editor.selected_text_coordinates
+        selected_text_coordinates: editor.selected_text_coordinates,
+        show_context_modal: editor.show_context_modal,
     }
 }
 
@@ -77,6 +81,8 @@ const mapDispatchToProps = dispatch => {
         tmpSaveSymbol: (context) => dispatch(tmpSaveSymbol(context)),
         toggleSymbolAddition: () => dispatch(toggleSymbolAddition()),
         selectTextCoordinates: (selected_text_coordinates) => dispatch(selectTextCoordinates(selected_text_coordinates)),
+        showContextModal: () => dispatch(showContextModal()),
+        hideContextModal: () => dispatch(hideContextModal()),
     };
 }
 

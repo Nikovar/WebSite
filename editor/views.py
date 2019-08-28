@@ -249,16 +249,6 @@ def store_location(request, book_id, *args, **kwargs):
             checked=checked,
         )
 
-        type_id = request.POST.get('context_type')
-        text = request.POST.get('context_description', '').strip()
-        if type_id and text:
-            new_context = Context.objects.create(type_id=type_id, text=text, inserter=inserter, checked=checked)
-            new_loc.contexts.add(new_context)
-            if checked:
-                new_context.who_checked = inserter
-                new_context.date_checked = new_loc.date_joined
-                new_context.save()
-
         for context_id in request.POST.getlist('context_ids[]'):
             cont = Context.objects.get(pk=context_id)
             new_loc.contexts.add(cont)
@@ -273,5 +263,21 @@ def store_location(request, book_id, *args, **kwargs):
 
 
 def store_context(request, book_id):
-    # TODO: write code here :))
+    if request.user.is_authenticated:   
+        inserter = request.user
+    else:
+        inserter, _ = guest_account(get_id_only=False)
+
+    checked = True if (inserter.is_superuser or inserter.is_staff) else False
+    type_id = request.POST.get('context_type')
+    text = request.POST.get('context_description', '').strip()
+
+    if type_id and text:
+        new_context = Context.objects.create(type_id=type_id, text=text, inserter=inserter, checked=checked)
+        new_loc.contexts.add(new_context)
+        if checked:
+            new_context.who_checked = inserter
+            new_context.date_checked = new_loc.date_joined
+            new_context.save()
+    
     return JsonResponse({'status': True}, safe=False)

@@ -120,3 +120,19 @@ export function tmpSaveSymbol(data) {
         })
     }
 }
+
+export function hideContextModal() {
+    return (dispatch, getState) => {
+        dispatch({
+            type: C.HIDE_CONTEXT_MODAL,
+        });
+    }
+}
+
+export function showContextModal() {
+    return (dispatch, getState) => {
+        dispatch({
+            type: C.SHOW_CONTEXT_MODAL,
+        });
+    }
+}
