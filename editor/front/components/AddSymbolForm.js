@@ -3,11 +3,20 @@ import {Modal} from 'react-bootstrap';
 import Select from 'react-select';
 import Creatable from 'react-select/lib/Creatable';
 import AsyncSelect from 'react-select/lib/Async';
+import {connect} from 'react-redux';
 import {SQUARE_BRACKET, getContexts, getContextTypes} from '../utils';
 import ContextModal from './ContextModal';
+import {
+    tmpSaveSymbol,
+    toggleSymbolAddition, 
+    selectTextCoordinates, 
+    hideContextModal, 
+    showContextModal, 
+    saveNewContext 
+} from '../actions'
 
 
-export default class AddSymbolForm extends Component  {
+class AddSymbolForm extends Component  {
 
     constructor(props) {
         super(props);
@@ -23,7 +32,6 @@ export default class AddSymbolForm extends Component  {
             word_len: 0,
             end: 0,
             text: '',
-            showForm: false
         }
     }
 
@@ -164,7 +172,9 @@ export default class AddSymbolForm extends Component  {
     }
 
     render() {
-        const {symbolAddition, symbols, show_context_modal, showContextModal, hideContextModal} = this.props;
+        const {
+            symbolAddition, symbols, show_context_modal, showContextModal, hideContextModal, saveNewContext
+        } = this.props;
         const {symbol, contexts} = this.state;
 
         if (!symbolAddition) {
@@ -173,7 +183,12 @@ export default class AddSymbolForm extends Component  {
 
         return(
             <div id='add-information-form'>
-                {show_context_modal && <ContextModal hideContextModal={hideContextModal}/>}
+                {show_context_modal && 
+                    <ContextModal 
+                        hideContextModal={hideContextModal}
+                        saveNewContext={saveNewContext}
+                    />
+                }
                 <div>
                     <div className="form-group">
                         <label htmlFor="symbol">Символ</label>
@@ -206,3 +221,28 @@ export default class AddSymbolForm extends Component  {
         )
     }
 }
+
+const mapStateToProps = state => {
+    const editor = state.editor;
+
+    return {
+        text_chunk: editor.text_chunk,
+        symbols: editor.symbols,
+        symbolAddition: editor.symbolAddition,
+        start_position: editor.start_position,
+        show_context_modal: editor.show_context_modal,
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        tmpSaveSymbol: (context) => dispatch(tmpSaveSymbol(context)),
+        toggleSymbolAddition: () => dispatch(toggleSymbolAddition()),
+        selectTextCoordinates: (selected_text_coordinates) => dispatch(selectTextCoordinates(selected_text_coordinates)),
+        showContextModal: () => dispatch(showContextModal()),
+        hideContextModal: () => dispatch(hideContextModal()),
+        saveNewContext: (type_id, description) => dispatch(saveNewContext(type_id, description)),
+    };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddSymbolForm);

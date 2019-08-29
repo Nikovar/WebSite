@@ -21,7 +21,7 @@ export default class ContextModal extends Component {
         if (!context_type_id || !context_description) {
             alert('Заполните данные для нового контекста!');
         } else {
-            alert('Success!');
+            this.props.saveNewContext(context_type_id, context_description);
         }
     }
 

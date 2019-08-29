@@ -90,8 +90,6 @@ export function tmpSaveSymbol(data) {
         data.csrfmiddlewaretoken = $('[name=csrfmiddlewaretoken]').val();
         data.page = getState().editor.page;
 
-        console.log(data)
-
         $.ajax({
             type: 'POST',
             url: `store_location/`,
@@ -134,5 +132,44 @@ export function showContextModal() {
         dispatch({
             type: C.SHOW_CONTEXT_MODAL,
         });
+    }
+}
+
+export function saveNewContext(type_id, description) {
+    return (dispatch, getState) => {
+        dispatch({
+            type: C.SAVE_NEW_CONTEXT_REQUEST
+        });
+
+        $.ajax({
+            type: 'POST',
+            url: `store_context/`,
+            dataType: 'json',
+            data: {
+                type_id: type_id,
+                description: description,
+                csrfmiddlewaretoken: $('[name=csrfmiddlewaretoken]').val(),
+            },
+            success: (data) => {
+                if (data.status) {
+                    alert('Вы успешно создали новый контекст!');
+                    dispatch({
+                        type: C.SAVE_NEW_CONTEXT_SUCCESS,
+                        data: data
+                    });
+                } else {
+                    console.log('somethins wrong...')
+                    dispatch({
+                        type: C.SAVE_NEW_CONTEXT_FAILURE
+                    });
+                }
+            },
+            error: () => {
+                console.log('TOTALY HAT')
+                dispatch({
+                    type: C.SAVE_NEW_CONTEXT_FAILURE
+                });
+            }
+        })
     }
 }

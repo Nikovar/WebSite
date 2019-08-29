@@ -269,12 +269,11 @@ def store_context(request, book_id):
         inserter, _ = guest_account(get_id_only=False)
 
     checked = True if (inserter.is_superuser or inserter.is_staff) else False
-    type_id = request.POST.get('context_type')
-    text = request.POST.get('context_description', '').strip()
+    type_id = request.POST.get('type_id')
+    text = request.POST.get('description', '').strip()
 
     if type_id and text:
         new_context = Context.objects.create(type_id=type_id, text=text, inserter=inserter, checked=checked)
-        new_loc.contexts.add(new_context)
         if checked:
             new_context.who_checked = inserter
             new_context.date_checked = new_loc.date_joined
