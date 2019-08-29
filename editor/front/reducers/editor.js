@@ -14,6 +14,7 @@ const initialState = {
     error: '',
     isFetching: false,
     symbolAddition: false,
+    show_context_modal: false,
 };
 
 
@@ -91,6 +92,40 @@ export default function editor(state=initialState, action) {
             return {
                 ...state,
                 symbolAddition: !state.symbolAddition
+            }
+
+        case C.HIDE_CONTEXT_MODAL:
+            return {
+                ...state, 
+                show_context_modal: false,
+            };
+
+        case C.SHOW_CONTEXT_MODAL:
+            return {
+                ...state, 
+                show_context_modal: true,
+            }
+
+        case C.SAVE_NEW_CONTEXT_REQUEST: 
+            return {
+                ...state,
+                isFetching: true,
+                error: '',
+            }
+        
+        case C.SAVE_NEW_CONTEXT_SUCCESS:
+            return {
+                ...state,
+                isFetching: false,
+                show_context_modal: false,
+            }
+
+        case C.SAVE_NEW_CONTEXT_FAILURE:
+            return {
+                ...state,
+                isFetching: false,
+                show_context_modal: false,
+                error: action.error,
             }
 
         default:

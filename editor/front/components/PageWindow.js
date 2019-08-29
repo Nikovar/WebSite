@@ -176,4 +176,24 @@ class PageWindow extends Component {
     }
 }
 
-export default PageWindow;
+const mapStateToProps = state => {
+    const editor = state.editor;
+
+    return {
+        page: editor.page,
+        number_pages: editor.number_pages,
+        text_chunk: editor.text_chunk,
+        symbol: editor.symbol,
+        existences: editor.existences,
+        start_position: editor.start_position,
+        selected_text_coordinates: editor.selected_text_coordinates,
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return { 
+        updatePage: (page) => dispatch(updatePage(page)) 
+    };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(PageWindow);

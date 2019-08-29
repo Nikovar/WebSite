@@ -1,11 +1,22 @@
 import React, {Component} from 'react';
+import {Modal} from 'react-bootstrap';
 import Select from 'react-select';
 import Creatable from 'react-select/lib/Creatable';
 import AsyncSelect from 'react-select/lib/Async';
+import {connect} from 'react-redux';
 import {SQUARE_BRACKET, getContexts, getContextTypes} from '../utils';
+import ContextModal from './ContextModal';
+import {
+    tmpSaveSymbol,
+    toggleSymbolAddition, 
+    selectTextCoordinates, 
+    hideContextModal, 
+    showContextModal, 
+    saveNewContext 
+} from '../actions'
 
 
-export default class AddSymbolForm extends Component  {
+class AddSymbolForm extends Component  {
 
     constructor(props) {
         super(props);
@@ -21,9 +32,6 @@ export default class AddSymbolForm extends Component  {
             word_len: 0,
             end: 0,
             text: '',
-            context_type: {},
-            context_description: '',
-            showForm: false
         }
     }
 
@@ -147,9 +155,7 @@ export default class AddSymbolForm extends Component  {
             alert('Выберите или добавьте новый символ!');
         } else {
             const {start_position} = this.props;
-            const {
-                symbol, start, word_shift, word_len, end, contexts, context_type, context_description
-            } = this.state;
+            const { symbol, start, word_shift, word_len, end, contexts } = this.state;
 
             let data = {
                 symbol_id: symbol.value,
@@ -159,8 +165,6 @@ export default class AddSymbolForm extends Component  {
                 word_len: word_len,
                 end: end,
                 context_ids: contexts.map(el => el.value),
-                context_type: context_type && context_type.value,
-                context_description: context_description,
             }
             this.props.tmpSaveSymbol(data);
             this.setState(this.getInitialState());
@@ -168,8 +172,10 @@ export default class AddSymbolForm extends Component  {
     }
 
     render() {
-        const {symbolAddition, symbols} = this.props;
-        const {symbol, contexts, context_type, context_description} = this.state;
+        const {
+            symbolAddition, symbols, show_context_modal, showContextModal, hideContextModal, saveNewContext
+        } = this.props;
+        const {symbol, contexts} = this.state;
 
         if (!symbolAddition) {
             return <button onClick={this.onToggle}>Добавить символ</button>
@@ -177,6 +183,12 @@ export default class AddSymbolForm extends Component  {
 
         return(
             <div id='add-information-form'>
+                {show_context_modal && 
+                    <ContextModal 
+                        hideContextModal={hideContextModal}
+                        saveNewContext={saveNewContext}
+                    />
+                }
                 <div>
                     <div className="form-group">
                         <label htmlFor="symbol">Символ</label>
@@ -188,7 +200,10 @@ export default class AddSymbolForm extends Component  {
                         />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="contexts">Контексты</label>
+                        <label htmlFor="contexts">
+                            Контексты
+                            <a className="add-context" onClick={showContextModal} title='Создать новый контекст'>+</a>
+                        </label>
                         <AsyncSelect
                             isMulti
                             id='contexts-style'
@@ -197,37 +212,6 @@ export default class AddSymbolForm extends Component  {
                             onChange={(contexts) => this.setState({contexts})}
                         />
                     </div>
-                    {this.state.showForm
-                        ?
-                        <div className="form-group" id='add-context-form'>
-                            <AsyncSelect
-                                value={context_type}
-                                loadOptions={getContextTypes}
-                                defaultOptions
-                                onChange={context_type => this.setState({context_type})}
-                            />
-                            <textarea
-                                style={{fontSize: '14px'}}
-                                value={context_description}
-                                className="form-control"
-                                rows="5"
-                                name='context_description'
-                                onChange={e => this.setState({context_description: e.target.value})}
-                            />
-                            <button id='cancel-adding-context' onClick={() => this.setState({showForm: false})}>
-                                Отмена
-                            </button>
-                        </div>
-                        :
-                        <div>
-                            <button 
-                                id="add-context"
-                                onClick={() => this.setState({showForm: true})}
-                                title='Добавить новый контекст'
-                            >+</button>
-                        </div>
-
-                    }
                 </div>
                 <div className="btn-group" role="group" id='btns-save'>
                     <button type='submit' onClick={this.onSubmit} style={{marginRight: '10px'}}>Сохранить</button>
@@ -237,3 +221,28 @@ export default class AddSymbolForm extends Component  {
         )
     }
 }
+
+const mapStateToProps = state => {
+    const editor = state.editor;
+
+    return {
+        text_chunk: editor.text_chunk,
+        symbols: editor.symbols,
+        symbolAddition: editor.symbolAddition,
+        start_position: editor.start_position,
+        show_context_modal: editor.show_context_modal,
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        tmpSaveSymbol: (context) => dispatch(tmpSaveSymbol(context)),
+        toggleSymbolAddition: () => dispatch(toggleSymbolAddition()),
+        selectTextCoordinates: (selected_text_coordinates) => dispatch(selectTextCoordinates(selected_text_coordinates)),
+        showContextModal: () => dispatch(showContextModal()),
+        hideContextModal: () => dispatch(hideContextModal()),
+        saveNewContext: (type_id, description) => dispatch(saveNewContext(type_id, description)),
+    };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddSymbolForm);
