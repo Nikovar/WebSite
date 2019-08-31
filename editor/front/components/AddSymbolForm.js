@@ -4,7 +4,7 @@ import Select from 'react-select';
 import Creatable from 'react-select/lib/Creatable';
 import AsyncSelect from 'react-select/lib/Async';
 import {connect} from 'react-redux';
-import {SQUARE_BRACKET, getContexts, getContextTypes} from '../utils';
+import {SQUARE_BRACKET, ALL_SYMBOLS, getContexts, getContextTypes} from '../utils';
 import ContextModal from './ContextModal';
 import {
     tmpSaveSymbol,

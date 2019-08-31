@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {updatePage} from '../actions';
 import {Pagination} from 'react-bootstrap';
-import {BLACK, WHITE, SQUARE_BRACKET, COLOR_SCHEME} from '../utils';
+import {BLACK, WHITE, SQUARE_BRACKET, COLOR_SCHEME, ALL_SYMBOLS} from '../utils';
 
 
 class PageWindow extends Component {
@@ -24,7 +24,18 @@ class PageWindow extends Component {
 
     highlight = () => {
         let { text_chunk, existences, symbol, start_position, selected_text_coordinates } = this.props;
-        let exs_to_highlight = existences && symbol && existences[symbol.value];
+
+        let exs_to_highlight = []
+        if (!symbol || symbol.value == ALL_SYMBOLS.value) {
+            for (let key in existences) {
+                for (let ex of existences[key]) {
+                    exs_to_highlight.push(ex);
+                }
+            }
+        } else {
+            exs_to_highlight = existences && symbol && existences[symbol.value];
+        }
+
         let new_chunk = '';
         let has_coordinates = Object.keys(selected_text_coordinates).length > 0;
 
@@ -46,7 +57,7 @@ class PageWindow extends Component {
             return new_chunk;
         }
                 
-        if (exs_to_highlight) {
+        if (exs_to_highlight && exs_to_highlight.length) {
             let positions = {};
             exs_to_highlight.map((exs, i) => {
                 let start = (exs[0] + exs[1]) - start_position;

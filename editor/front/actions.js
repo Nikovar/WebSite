@@ -12,8 +12,7 @@ export function init(start_position, book_id, page, number_pages, symbols, exist
             number_pages,
             symbols,
             existences,
-            text_chunk,
-            symbol: symbols.length ? symbols[0] : null
+            text_chunk
         }
     }
 }

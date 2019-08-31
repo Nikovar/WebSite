@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import Select from 'react-select';
 import {selectSymbol} from '../actions';
 import {connect} from 'react-redux';
+import {ALL_SYMBOLS} from '../utils';
 
 
 const SymbolNavigation = ({...props}) => {
@@ -10,9 +11,9 @@ const SymbolNavigation = ({...props}) => {
     return(
         <div>
             <Select
-                value={symbol || symbols[0]}
+                value={symbol || ALL_SYMBOLS}
                 onChange={selectSymbol}
-                options={symbols}
+                options={[ALL_SYMBOLS].concat(symbols)}
             />
             <div id='symbol-navigation'>
                 Здесь должна быть навигация

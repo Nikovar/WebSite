@@ -12,6 +12,11 @@ export const COLOR_SCHEME = {
     6: "#87cefa",
 };
 
+export const ALL_SYMBOLS = {
+    value: -1,
+    label: 'Все символы'
+}
+
 function getOptions(input, href, additional) {
     return fetch(`${href}?q=${input}${additional ? '&' + additional : ''}`, {credentials: 'same-origin'})
         .then((response) => {
