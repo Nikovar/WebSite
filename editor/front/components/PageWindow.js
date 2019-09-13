@@ -8,7 +8,7 @@ import {BLACK, WHITE, SQUARE_BRACKET, COLOR_SCHEME, ALL_SYMBOLS} from '../utils'
 class PageWindow extends Component {
 
     get_span = (text, exs_id, add_class='') => {
-        let color = COLOR_SCHEME[exs_id % 7] || BLACK;
+        let color = COLOR_SCHEME[exs_id % 35] || BLACK;
         let styles = `color:${color};`;
         if (color != BLACK) {
             text = `${text}`;
@@ -26,6 +26,7 @@ class PageWindow extends Component {
         let { text_chunk, existences, symbol, start_position, selected_text_coordinates } = this.props;
 
         let exs_to_highlight = []
+        // Если выбран вариант "Все символы", то подсвечиваем всё
         if (!symbol || symbol.value == ALL_SYMBOLS.value) {
             for (let key in existences) {
                 for (let ex of existences[key]) {
@@ -40,6 +41,7 @@ class PageWindow extends Component {
         let has_coordinates = Object.keys(selected_text_coordinates).length > 0;
 
         if (has_coordinates) {
+            // Подсветка "пользовательского" выделения
             let start_context = selected_text_coordinates.start;
             let start_selected_text = selected_text_coordinates.word_shift;
             let end_selected_text = start_selected_text + selected_text_coordinates.word_len;
@@ -142,11 +144,6 @@ class PageWindow extends Component {
                     break;
                 }
                 currEl = currEl.nextElementSibling;
-            }
-
-            let brackets = document.getElementsByClassName(SQUARE_BRACKET);
-            for (let b of brackets) {
-                b.style.display = is_out ? 'none' : '';
             }
         }
     }
