@@ -7,8 +7,8 @@ import {BLACK, WHITE, SQUARE_BRACKET, COLOR_SCHEME, ALL_SYMBOLS} from '../utils'
 
 class PageWindow extends Component {
 
-    get_span = (text, exs_id, add_class='') => {
-        let color = COLOR_SCHEME[exs_id % 35] || BLACK;
+    get_span = (text, exs_id, symbol_id, add_class='') => {
+        let color = COLOR_SCHEME[symbol_id % 35] || BLACK;
         let styles = `color:${color};`;
         if (color != BLACK) {
             text = `${text}`;
@@ -30,12 +30,14 @@ class PageWindow extends Component {
         if (!symbol || symbol.value == ALL_SYMBOLS.value) {
             for (let key in existences) {
                 for (let ex of existences[key]) {
-                    exs_to_highlight.push(ex);
+                    exs_to_highlight.push(ex.concat([Number(key)]));
                 }
             }
-        } else {
-            exs_to_highlight = existences && symbol && existences[symbol.value];
-        }
+        } else if (existences && symbol && existences[symbol.value]) {
+            for (let ex of existences[symbol.value]) {
+                exs_to_highlight.push(ex.concat([Number(symbol.value)]));
+            }
+        }   
 
         let new_chunk = '';
         let has_coordinates = Object.keys(selected_text_coordinates).length > 0;
@@ -64,8 +66,8 @@ class PageWindow extends Component {
             exs_to_highlight.map((exs, i) => {
                 let start = (exs[0] + exs[1]) - start_position;
                 let end = (start + exs[2]);
-                positions[start] = ['[', i];
-                positions[end] = [']', i];
+                positions[start] = {'character': '[', 'exs_number': i, 'symbol_id': exs[4]};
+                positions[end] = {'character': ']', 'exs_number': i, 'symbol_id': exs[4]};
             })
 
             let my_color_stack = [];
@@ -74,29 +76,33 @@ class PageWindow extends Component {
 
             for (let i = 0; i < text_chunk.length; i++) {
                 if (i in positions) {
-                    let symbol = positions[i][0];
-                    let exs_id = my_color_stack[my_color_stack.length - 1];
-                    new_chunk += this.get_span(tmp_chunk, exs_id)
+                    let {character, exs_number, symbol_id} = positions[i];
+                    let data = my_color_stack[my_color_stack.length - 1];
 
-                    if (symbol == '[') {
-                        new_chunk += this.get_span(symbol, positions[i][1], SQUARE_BRACKET);
-                        tmp_chunk = text_chunk[i];
-                        my_color_stack.push(positions[i][1]);
+                    new_chunk += this.get_span(tmp_chunk, data && data[0], data && data[1])
+                    new_chunk += this.get_span(character, exs_number, symbol_id, SQUARE_BRACKET);
+                    tmp_chunk = text_chunk[i];
+
+                    if (character == '[') {
+                        my_color_stack.push([exs_number, symbol_id]);
                     } else {
-                        new_chunk += this.get_span(symbol, positions[i][1], SQUARE_BRACKET);
-
-                        let ind = my_color_stack.indexOf(positions[i][1]);
+                        let ind = -1;
+                        for (let el in my_color_stack) {
+                            if (my_color_stack[el][1] == symbol_id) {
+                                ind = el;
+                                break
+                            }
+                        }
                         if (ind != -1) {
                             my_color_stack.splice(ind, 1);
                         }
-                        tmp_chunk = text_chunk[i];
                     }
                 } else {
                     tmp_chunk += text_chunk[i];
                 }
             }
-            let exs_id = my_color_stack[my_color_stack.length - 1];
-            new_chunk += this.get_span(tmp_chunk, exs_id);
+            let data = my_color_stack[my_color_stack.length - 1];
+            new_chunk += this.get_span(tmp_chunk, data && data[0], data && data[1]);
             
             return new_chunk;
         } else {
@@ -123,6 +129,7 @@ class PageWindow extends Component {
 
         let className = this.get_target_class_name(e);
         if (className) {
+
             let exs_spans = document.getElementsByClassName('exs');
             for (let exs_span of exs_spans) {
                 exs_span.style.color = is_out ? BLACK : exs_span.dataset.color;
