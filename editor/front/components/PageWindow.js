@@ -72,14 +72,9 @@ class PageWindow extends Component {
 
                 if (start in positions) {
                     let new_elem = {'exs_number': i, 'symbol_id': exs[4], 'end': end};
-                    console.log(start)
-                    console.log(new_elem)
                     let index = positions[start]['start'].findIndex((el) => el.end < new_elem.end);
                     index = index != -1 ? index : 0;
                     positions[start]['start'].splice(index, 0, new_elem);
-                    console.log('index', index)
-                    console.log(positions[start]['start'])
-                    console.log('=========')
                 } else {
                     positions[start] = {
                         'start': [{'exs_number': i, 'symbol_id': exs[4], 'end': end}],
@@ -99,8 +94,6 @@ class PageWindow extends Component {
                     }
                 }
             })
-
-            console.log(positions)
 
             let my_color_stack = [];
             let tmp_chunk = '';
