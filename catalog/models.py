@@ -23,10 +23,10 @@ class BaseWithMetaInfo(models.Model):
     date_joined = models.DateTimeField(default=current_time)
     checked = models.BooleanField(default=False)
     
-    who_checked = models.ForeignKey(get_user_model(), null=True, default=None, on_delete=default_user,
+    who_checked = models.ForeignKey(get_user_model(), null=True, blank=True, on_delete=default_user,
                                     related_name='checked_%(class)ss',
                                     related_query_name='%(class)ss_checked')
-    date_checked = models.DateTimeField(null=True, default=None)
+    date_checked = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         abstract = True
@@ -108,7 +108,6 @@ class Symbol(BaseWithMetaInfo):
         return self.name
 
 
-# Standard Django's implementation for many-to-many relation with extra fields @gronix
 class Existence(models.Model):
     symbol = models.ForeignKey(Symbol, on_delete=models.CASCADE,
                                related_name='existences',
@@ -137,21 +136,14 @@ class Location(BaseWithMetaInfo):
     class Meta:
         ordering = ['start', 'word_shift', 'word_len']
 
-    def save(self, *args, **kwargs):
-        # @gronix: "try..except" may seem excessive, but i prefer to keep this code due to future structure
-        #   corrections and for more general approach at the very beginnings of project.
-        try:
-            if self.word_shift + self.word_len > self.end_shift:
-                raise ValidationError("Symbol goes outside the existence boards!")
-        except ValidationError as e:
-            print("ERROR! While saving was detected following:\n{}\nSaving aborted.\n".format(e.message))
-        else:
-            super().save(*args, **kwargs)
-
     def __str__(self):
         return '"{}" in "{}" from pos №{} with {} contexts'.format(
                    self.existence.symbol.name, self.existence.book.title, self.start, self.contexts.count()
         )
+
+    def clean(self):
+        if self.word_shift + self.word_len > self.end_shift:
+            raise ValidationError("Symbol goes outside the existence boards!")
 
 
 class ContextType(BaseWithMetaInfo):

@@ -62,12 +62,38 @@ class PageWindow extends Component {
         }
                 
         if (exs_to_highlight && exs_to_highlight.length) {
+
+            // по сути, в positions хранятся координаты скобок.
             let positions = {};
+
             exs_to_highlight.map((exs, i) => {
                 let start = (exs[0] + exs[1]) - start_position;
                 let end = (start + exs[2]);
-                positions[start] = {'character': '[', 'exs_number': i, 'symbol_id': exs[4]};
-                positions[end] = {'character': ']', 'exs_number': i, 'symbol_id': exs[4]};
+
+                if (start in positions) {
+                    let new_elem = {'exs_number': i, 'symbol_id': exs[4], 'end': end};
+                    let index = positions[start]['start'].findIndex((el) => el.end < new_elem.end);
+                    index = index != -1 ? index : 0;
+                    positions[start]['start'].splice(index, 0, new_elem);
+                } else {
+                    positions[start] = {
+                        'start': [{'exs_number': i, 'symbol_id': exs[4], 'end': end}],
+                        'end': [],
+                    }
+                }
+
+                if (end in positions) {
+                    let new_elem = {'exs_number': i, 'symbol_id': exs[4], 'start': start};
+                    let index = positions[end]['end'].findIndex((el) => el.start < new_elem.start);
+                    index = index != -1 ? index : 0;
+                    positions[end]['end'].splice(index, 0, new_elem);
+                } else {
+                    positions[end] = {
+                        'start': [],
+                        'end': [{'exs_number': i, 'symbol_id': exs[4], 'start': start}],
+                    }
+                }
+
             })
 
             let my_color_stack = [];
@@ -76,27 +102,30 @@ class PageWindow extends Component {
 
             for (let i = 0; i < text_chunk.length; i++) {
                 if (i in positions) {
-                    let {character, exs_number, symbol_id} = positions[i];
+
                     let data = my_color_stack[my_color_stack.length - 1];
-
                     new_chunk += this.get_span(tmp_chunk, data && data[0], data && data[1])
-                    new_chunk += this.get_span(character, exs_number, symbol_id, SQUARE_BRACKET);
-                    tmp_chunk = text_chunk[i];
 
-                    if (character == '[') {
-                        my_color_stack.push([exs_number, symbol_id]);
-                    } else {
-                        let ind = -1;
-                        for (let el in my_color_stack) {
-                            if (my_color_stack[el][1] == symbol_id) {
-                                ind = el;
-                                break
-                            }
-                        }
-                        if (ind != -1) {
-                            my_color_stack.splice(ind, 1);
+                    let end_brackets = positions[i]['end'];
+                    for (let end_bracket of end_brackets) {
+                        let {exs_number, symbol_id} = end_bracket;
+                        let data = my_color_stack[my_color_stack.length - 1];
+                        new_chunk += this.get_span(']', exs_number, symbol_id, SQUARE_BRACKET);
+                        let index = my_color_stack.findIndex((el) => el[1] == symbol_id);
+                        if (index != -1) {
+                            my_color_stack.splice(index, 1);
                         }
                     }
+                    
+                    let start_brackets = positions[i]['start'];
+                    for (let start_bracket of start_brackets) {
+                        let {exs_number, symbol_id} = start_bracket;
+                        let data = my_color_stack[my_color_stack.length - 1];
+                        new_chunk += this.get_span('[', exs_number, symbol_id, SQUARE_BRACKET);
+                        my_color_stack.push([exs_number, symbol_id]);
+                    }
+                    tmp_chunk = text_chunk[i];
+
                 } else {
                     tmp_chunk += text_chunk[i];
                 }
@@ -117,7 +146,11 @@ class PageWindow extends Component {
                 target = target.parentElement;
             }
             
-            if (target.tagName == 'SPAN' && !target.classList.contains('exs-undefined') && !target.classList.contains(SQUARE_BRACKET)) {
+            if (
+                target.tagName == 'SPAN' 
+                && !target.classList.contains('exs-undefined') 
+                && !target.classList.contains(SQUARE_BRACKET)
+            ) {
                 return target.classList[1];
             }
         }
