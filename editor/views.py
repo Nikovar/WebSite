@@ -11,6 +11,7 @@ from accounts.utils import guest_account
 from catalog.models import Author, Book, Existence, Location, Symbol, Context, ContextType
 from catalog.utils import get_text
 from core.forms import BookChoosing
+from django.core.exceptions import ValidationError
 
 from .settings import BOOK_CHUNK_SIZE, error_messages
 
@@ -239,7 +240,7 @@ def store_location(request, book_id, *args, **kwargs):
         existence, _ = Existence.objects.get_or_create(symbol=symbol, book=book)
         checked = True if (inserter.is_superuser or inserter.is_staff) else False
 
-        new_loc = Location.objects.create(
+        params = dict(
             existence=existence,
             start=request.POST['start'],
             end_shift=request.POST['end'],
@@ -248,6 +249,16 @@ def store_location(request, book_id, *args, **kwargs):
             inserter=inserter,
             checked=checked,
         )
+
+        new_loc = Location()
+        for key, value in params.items():
+            setattr(new_loc, key, value)
+        try:
+            new_loc.full_clean(exclude=['existence'])
+        except ValidationError as e:
+            return JsonResponse({'status': False}, safe=False)
+
+        new_loc.save()
 
         for context_id in request.POST.getlist('context_ids[]'):
             cont = Context.objects.get(pk=context_id)
@@ -258,7 +269,6 @@ def store_location(request, book_id, *args, **kwargs):
             new_loc.date_checked = new_loc.date_joined
             new_loc.save()
 
-    # Ответ оставить пока именно в таком виде. Нам пока нет нужды ещё что-то возвращать.
     return JsonResponse({'status': True}, safe=False)
 
 
