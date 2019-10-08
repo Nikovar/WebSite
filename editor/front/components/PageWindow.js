@@ -93,6 +93,7 @@ class PageWindow extends Component {
                         'end': [{'exs_number': i, 'symbol_id': exs[4], 'start': start}],
                     }
                 }
+
             })
 
             let my_color_stack = [];
